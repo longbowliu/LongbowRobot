@@ -2,7 +2,7 @@
 #define SERVOS_H
 
 
-#define N_SERVOS 6
+#define N_SERVOS 9
 
 // This delay in milliseconds determines the pause 
 // between each one degree step the servo travels.  Increasing 
@@ -10,10 +10,10 @@
 // Decreasing this number will make the servo sweep more quickly.
 // Zero is the default number and will make the servos spin at
 // full speed.  150 ms makes them spin very slowly.
-int stepDelay [N_SERVOS] = { 0, 0 }; // ms
+int stepDelay [N_SERVOS] = { 15,15,15,15,15,15,15,15,15 }; // ms
 
 // Pins
-byte servoPins [N_SERVOS] = { 7, 8 };
+byte servoPins [N_SERVOS] = {8,11,12,13,14,15,a7,a8,a9 };
 
 // Initial Position
 byte servoInitPosition [N_SERVOS] = { 90, 90 }; // [0, 180] degrees
