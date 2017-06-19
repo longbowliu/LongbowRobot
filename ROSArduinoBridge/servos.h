@@ -16,7 +16,7 @@ int stepDelay [N_SERVOS] = { 15,15,15,15,15,15,15,15,15 }; // ms
 byte servoPins [N_SERVOS] = {8,11,12,13,14,15,a7,a8,a9 };
 
 // Initial Position
-byte servoInitPosition [N_SERVOS] = { 90, 90 }; // [0, 180] degrees
+byte servoInitPosition [N_SERVOS] = { 90, 90,120,160,1,90,90,90,90 }; // [0, 180] degrees
 
 
 class SweepServo
