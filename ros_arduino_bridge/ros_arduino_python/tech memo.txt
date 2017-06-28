@@ -1,0 +1,272 @@
+﻿查看个版本发布时间
+https://svncarel.carel.com/svn/pvpro/tags/
+
+update/insert 设备模板和设备实例时 参考 version230 ---> pR300T_L1 ,
+		-->涉及到log的时候参考220 (& change log variable to not log variables) --> pChrono (log,buffer).
+		--> 涉及到 maxvalue ,minvalue引用其他变量的时候 参考：C:\db\database\pvpro242\devices\WICO\update.sql
+		
+update/insert 设备模板和设备实例的cftableext 时 参考 version242 ---> WICO
+			  instances要做log的时候 要参照220 pChrono  （idhsvariable is not null &  idhsvariable is null 两种情况都要包含进来。
+
+
+查找某个内容所在页面：
+select * from cftext where  code ='menu' and subcode = 'booklet';
+
+https://15403099.uttcare.com/PlantVisorPRO/arch/manager/DBCommander.jsp
+debug/pvprod3bug
+
+
+
+C.程序设计语言_特别版 59  
+
+D:\总部客制化\crea\all\PP2C100XP0\trunk\dist\Program Files\CAREL\crea\devices
+
+mstsc 195 , 用户名：adminsz 密码： carel@suzhou ， ftp目录C:\share\FlashXP
+
+
+XP开发环境：C:\xp_branch
+WIN7开发环境 ： E:\WS_PVPRO2.x.y_Windows_Embedded_Standard_7
+Main_trunk开发环境  D:\workspace_32\PlantVisorPRO
+设备模板创建 用xp里的C:\workspace220 
+
+
+http://answers.microsoft.com/en-us/windows/forum/windows_vista-performance/disable-the-interactive-services-dialog-detection/ca139ba9-c96c-49af-bc09-83abc26f3f5d
+http://blogs.msdn.com/b/patricka/archive/2010/04/27/what-is-interactive-services-detection-and-why-is-it-blinking-at-me.aspx
+
+
+http://java-service-wrapper.996253.n3.nabble.com/Swing-GUI-not-working-in-Windows-7-td2953.html
+http://wrapper.tanukisoftware.com/doc/english/prop-ntservice-interactive.html
+
+C:\Windows\Resources\Themes\Aero\Shell\NormalColor
+
+从pc拨号 PVPRO 
+PVRemote
+PD35010
+
+Mail 测试用帐号
+aspmx.l.google.com
+74.125.136.26 : 25
+下面的帐号已经不再用了，用自己的帐号。
+scanner@carel-china.com
+carel1234
+
+系统重装后的注意事项：
+1 ， 数据库创建
+2， 4个bat文件的执行
+3， dll拷贝到system32下面  ****还要拷到  SysWOW64  *****
+4， maven的添加 ： <<.m2文件夹的替换 ,里面包含了所有要用的jar文件>>
+5, 环境变量的创建时 别忘了 CATALINA_HOME，
+
+
+对比两个设备变量模板差异时使用：适用于 先添加设备 再比较
+select dm.code, vm.* from cfvarmdl vm , cfdevmdl dm  where dm.iddevmdl in (select iddevmdl from cfdevice where idline > 1 and iscancelled = 'FALSE' ) and
+dm.iddevmdl = vm.iddevmdl order by dm.code , vm.code;
+
+对比两个设备变量差异时使用：先添加设备 再比较
+select dm.code ,var.* from cfvariable var, cfdevice dev,cfdevmdl dm where var.idhsvariable is not null and 
+var.iddevice = dev.iddevice and dev.iddevmdl = dm.iddevmdl and 
+var.iddevice in (select iddevice from cfdevice where idline > 1 and iscancelled = 'FALSE' ) order by dm.code ,var.code;
+
+
+
+
+HQ 
+https://dev.remotevalue.com/remote
+
+
+RemotePRO 注册
+00-0C-29-D4-FB-D8;
+DashBoard               A1DSW6YEG6K4    HAC7UH4QSCVI
+Synchro 50              A1RMW6YEG6K4    HAGUUH4QSCVI
+Align 7000              A1DMW6YEG6K4    HACUUH4QSCVI
+
+重设pvpro密码为 admin / psw: admin
+update cfusers set password='0DPiKuNIrrVmD8IUCuw1hQxNqZc=' where username='admin'
+
+重装系统是 COMS密码
+Lerac10 / lerac15
+
+Watchdog Timeout / System Monitoring / Advanced /BIOS
+
+13年 上海制冷站 三台触摸PVPRO密码 CAREL   ：　 LERAC1234
+联想一体机 remoteValue ： Carel@suzhou
+
+
+  here you can find PVShell.xml and BackupTool.xml at:
+
+•	https://svncarel.carel.com/svn/pvpro/trunk/other/deploy_components/ProgramFiles_CAREL/CAREL/etc
+•	https://svncarel.carel.com/svn/pvpro/trunk/other/deploy_components/BackupTool
+
+D:\PVPRO\truck\other\deploy_components\ProgramFiles_CAREL\CAREL\etc
+
+
+
+
+编写数据库批处理文件时，只能用记事本之类的无格式化文本文件打开
+
+cfvariable  type 的值为： 1，digital ; 2, analog; 3, integer ; 4, alarm.  
+
+readwrite : 1 ,readonly ; 2, write only  3, readwrite  11 , OEM ;  
+
+device creater address read 一般跟 数据库里的 address in 保持一致就可， 只有pRack 才将一个地址分给几个变量用。
+
+
+设置控制器协议的方式 ：表　cfline　字段　typeprotocol    （随机值：STRESS，其他：RS485N,FTD2IO ）
+
+PVPRO服务的安装与卸载  C:\Carel\PlantVisorPRO\Services\server  PVPROService.exe -u / -i
+
+C:\SetPermission2postgres_EN    数据移植时使用
+
+D:\database\ createPVPRODB.bat	创建数据库   步骤：关闭pvpro,重启数据库后运行批处理，依次输入 " 1   CN "CN 为要选择的语言 
+
+搜索 PVPROService.exe 文件；
+service path:     C:\Carel\PlantVisorPRO\Services\lowinfo
+
+
+
+
+表相关 
+
+cfdevcustom 	 C:\Carel\PlantVisorPRO\engine\webapps\PlantVisorPRO\custom\dtlview   
+
+
+
+
+
+第一次连接控制器　
+注意：电源线先连接控制器，再接通电源；地线，正负线不要接反了；
+
+检测不到控制器时处理方式
+eclipce -> run configuration ->arguments ->working directory -> other :　C:\Carel\PlantVisorPRO\engine\bin
+
+
+SVN:
+安装  :   http://subclipse.tigris.org/update 
+
+资源  ：  svn://carelsw-test01/production
+
+密码设置：
+1.x
+update cfusers set password='0DPiKuNIrrVmD8IUCuw1hQxNqZc=' where username='admin'
+2.x
+cfusers 表设置密码过期
+productinfo  表设置是否为第一次登陆。pwdchangedone->0 然后重启PVPRO
+
+
+
+Plant visor PRO
+
+
+\\192.168.10.124\d$
+用户名：carel
+密码: CAREL
+**********2.0 version  之后要用CAREL 或 INTEGER 和 support.bat生成的密码去登录
+
+
+vnc密码:  pvp_vnc
+
+
+Plant visor PRO  update步骤：
+
+1，初始化时间地域。
+2，change  region。
+3，copy 备用软件到d盘（rar，postgres，智能输入法  ,sp3）
+4，setup update service package（关闭 关机程序命令：cmd   shutdown -a ）
+5，注册
+
+
+
+PCO5 设置： 本机IP: 172.16.0.2 ,    PCO IP :172.16.0.1
+	 admin , fuckadmin
+	 
+	 
+	 
+	 PVPRO 试用版本设置
+	 insert into hsproduct values(current_timestamp,CURRENT_TIMESTAMP,'BqkFDFv44ASufz5r14nXek0SWKFMRqz0OoCZ7HRX91g6TyGouMWEC8HaWtwmwBRlAZFFmYSFYqil09wKh6klBg==')
+
+c:/SetPermission2postgres_EN.bat     用于更换（替换data文件夹）数据库后执行
+
+ 
+ 
+
+
+1.X通用：
+
+java -jar support.jar ky A1LE56789012/A1BE56789012   mac地址
+
+
+
+java -jar support.jar KY A1PP56789012 E0DB55E71035   --- LAN PROTOCAL
+
+java -jar support.jar KY A1TSWITCH123 mac      ----technology switch
+HAGYLH7HBOFB (本机)
+ 
+
+
+
+
+
+A1LEF2LUN39W
+HAJW0Q5XX2M8
+
+XP0 HYPER 双核
+XE0  单核
+
+PVPRO 2 解压备份：
+
+ <ExtractBackupButton value="true" description="value could be true-button is visible or false-no extract button; assume false if this tag is missing"/>
+ set this item as true
+ 
+ 当注册不成功的时候 要检查一下是否 升级过 如 "“A1LE...”升级为 “A1SE...”  或  “A1SE...” 升级为 “A1BE...”
+ 
+ kevin 机子上的RemoteValue   admin/adminadmin
+
+
+**************************************************************
+
+CATALINA_HOME      C:\Carel\PlantVisorPRO\engine 
+JAVA_HOME:           C:\Programmi\Java\jdk1.5.0_13 
+PVPRO_HOME          C:\Carel\PlantVisorPRO 
+TOMCAT_HOME       C:\Carel\PlantVisorPRO\engine
+
+
+C:\Carel\PlantVisorPRO\guardian\service>PVPROservice.exe -i
+C:\Carel\PlantVisorPRO\Services\lowinfo>PVPROservice.exe -i
+
+
+D:\PVPRO\truck\src\database\database>createPVPRODB_2x.bat CN true
+
+HQ pvpro
+longbow.liu
+123456
+
+ftp
+
+pvp_ftp
+pvp_ftp_admin
+
+CAREL MB ,映射关系
+analog 和 integer (地址冲突)的时候 integer 类型地址加5001  （从2cf导入，integer手动添加 ,addressin: 1868-->306869 ; addressout 1868-->606869 ）
+
+Host: 217.57.13.60
+1tool_sz / 1tool12345
+1tool_hq/ 1tool_hq_1234
+york.yu/york12345
+
+pvpro's ftp:
+user name: pvp_ftp
+passwd: pvp_ftp_admin
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+ 
+ 
