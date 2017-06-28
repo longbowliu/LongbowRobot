@@ -334,13 +334,13 @@ class Arduino:
         ''' Usage: servo_write(id, pos)
             Position is given in radians and converted to degrees before sending
         '''        
-        return self.execute_ack('s %d %d' %(id, min(SERVO_MAX, max(SERVO_MIN, degrees(pos)))))
+        return self.execute_ack('s %d %d' %(id, min(SERVO_MAX, max(SERVO_MIN, pos))))
     
     def servo_read(self, id):
         ''' Usage: servo_read(id)
             The returned position is converted from degrees to radians
         '''        
-        return radians(self.execute('t %d' %id))
+        return self.execute('t %d' %id)
 
     def ping(self, pin):
         ''' The srf05/Ping command queries an SRF05/Ping sonar sensor
