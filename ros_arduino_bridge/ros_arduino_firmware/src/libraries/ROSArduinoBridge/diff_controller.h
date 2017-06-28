@@ -1,9 +1,4 @@
-/* Functions and type-defs for PID control.
 
-   Taken mostly from Mike Ferguson's ArbotiX code which lives at:
-   
-   http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
-*/
 
 /* PID setpoint info For a Motor */
 typedef struct {
@@ -30,13 +25,24 @@ typedef struct {
 }
 SetPointInfo;
 
-SetPointInfo leftPID, rightPID;
+SetPointInfo leftPID;
+SetPointInfo rightPID;
 
 /* PID Parameters */
 int Kp = 20;
 int Kd = 12;
 int Ki = 0;
 int Ko = 50;
+
+int left_Kp=Kp;
+int left_Kd=Kd;
+int left_Ki=Ki;
+int left_Ko=Ko;
+
+int right_Kp=Kp;
+int right_Kd=Kd;
+int right_Ki=Ki;
+int right_Ko=Ko;
 
 unsigned char moving = 0; // is the base in motion?
 
@@ -65,7 +71,7 @@ void resetPID(){
 }
 
 /* PID routine to compute the next motor commands */
-void doPID(SetPointInfo * p) {
+void dorightID(SetPointInfo * p) {
   long Perror;
   long output;
   int input;
@@ -82,12 +88,14 @@ void doPID(SetPointInfo * p) {
   */
   //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
   // p->PrevErr = Perror;
-  output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+  output = (right_Kp * Perror - right_Kd * (input - p->PrevInput) + p->ITerm) / right_Ko;
+
   p->PrevEnc = p->Encoder;
 
   output += p->output;
   // Accumulate Integral error *or* Limit output.
   // Stop accumulating when output saturates
+
   if (output >= MAX_PWM)
     output = MAX_PWM;
   else if (output <= -MAX_PWM)
@@ -96,7 +104,80 @@ void doPID(SetPointInfo * p) {
   /*
   * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
   */
-    p->ITerm += Ki * Perror;
+    p->ITerm += right_Ki * Perror;
+  
+
+
+  p->output = output;
+
+  p->PrevInput = input;
+}
+
+/* PID routine to compute the next motor commands */
+void doleftPID(SetPointInfo * p) {
+  long Perror;
+  long output;
+  int input;
+  
+  //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
+  input = p->Encoder - p->PrevEnc;
+  Perror =p->TargetTicksPerFrame - input;
+
+  
+  
+
+  /*
+  * Avoid derivative kick and allow tuning changes,
+  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
+  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
+  */
+  //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
+  // p->PrevErr = Perror;
+  output = (left_Kp * Perror - left_Kd * (input - p->PrevInput) + p->ITerm) / left_Ko;
+
+  p->PrevEnc = p->Encoder;
+
+  output += p->output;
+  // Accumulate Integral error *or* Limit output.
+  // Stop accumulating when output saturates
+  /*
+  if(output>=0){
+    if(output <80){
+      output = 80;
+    }
+    else if (output >= MAX_PWM){
+      output = MAX_PWM;
+    }else{
+       p->ITerm += left_Ki * Perror;
+    }
+  }
+  else{
+    if(output>-80){
+      output = -80;
+    }
+    else if (output <= -MAX_PWM){
+      output = -MAX_PWM;
+    }else{
+       p->ITerm += left_Ki * Perror;
+    }
+  }
+  */
+  
+    if (output >= MAX_PWM)
+    output = MAX_PWM;
+  else if (output <= -MAX_PWM)
+    output = -MAX_PWM;
+  else
+  /*
+  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
+  */
+    p->ITerm += left_Ki * Perror;
+  
+ 
+  /*
+  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
+  */
+   
 
   p->output = output;
   p->PrevInput = input;
@@ -106,7 +187,11 @@ void doPID(SetPointInfo * p) {
 void updatePID() {
   /* Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
+
+  
   rightPID.Encoder = readEncoder(RIGHT);
+  
+
   
   /* If we're not moving there is nothing more to do */
   if (!moving){
@@ -120,11 +205,20 @@ void updatePID() {
     return;
   }
 
-  /* Compute PID update for each motor */
-  doPID(&rightPID);
-  doPID(&leftPID);
+  doleftPID(&leftPID);//执行左马达PID
+  dorightID(&rightPID);//执行右马达PID
+ 
 
   /* Set the motor speeds accordingly */
-  setMotorSpeeds(leftPID.output, rightPID.output);
+  int adjustment = 0;
+  int diff = rightPID.Encoder - leftPID.Encoder;
+  if(leftPID.output>0){
+    adjustment = 30;
+    adjustment += diff*10;
+  }else{
+    adjustment = -30;
+    adjustment += -diff*10;
+  }
+  setMotorSpeeds(leftPID.output+adjustment, rightPID.output);
 }
 

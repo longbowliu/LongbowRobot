@@ -1,56 +1,71 @@
 /***************************************************************
    Motor driver definitions
-   
+
    Add a "#elif defined" block to this file to include support
    for a particular motor driver.  Then add the appropriate
    #define near the top of the main ROSArduinoBridge.ino file.
-   
+
    *************************************************************/
 
 #ifdef USE_BASE
-   
-#ifdef POLOLU_VNH5019
-  /* Include the Pololu library */
-  #include "DualVNH5019MotorShield.h"
 
-  /* Create the motor driver object */
-  DualVNH5019MotorShield drive;
-  
-  /* Wrap the motor driver initialization */
+#ifdef L298N_DUAL_HBRIDGE
+
+  boolean directionLeft = false;
+  boolean directionRight = false;
+
+  boolean direction(int i){
+     if(i == LEFT){
+        return directionLeft;
+     }else{
+        return directionRight;
+     }
+  }
   void initMotorController() {
-    drive.init();
+  // set all the motor control pins to outputs
+//  pinMode(ENA, OUTPUT);
+//  pinMode(ENB, OUTPUT);
+  pinMode(Right_motor_back, OUTPUT);
+  pinMode(Right_motor_go, OUTPUT);
+  pinMode(Left_motor_go, OUTPUT);
+  pinMode(Left_motor_back, OUTPUT);
   }
 
-  /* Wrap the drive motor set speed function */
   void setMotorSpeed(int i, int spd) {
-    if (i == LEFT) drive.setM1Speed(spd);
-    else drive.setM2Speed(spd);
+    if(spd>MAX_PWM){
+      spd=MAX_PWM;
+    }
+       if(spd<-MAX_PWM){
+      spd=-1*MAX_PWM;
+    }
+    if (i == RIGHT){
+        if(spd>=0){
+            directionLeft = FORWARDS;
+            digitalWrite(Right_motor_go, HIGH);
+            digitalWrite(Right_motor_back, LOW);
+            analogWrite(Right_motor_go, spd);
+        }else if(spd < 0){
+            directionLeft = BACKWARDS;
+            digitalWrite(Right_motor_back, HIGH);
+            digitalWrite(Right_motor_go, LOW);
+            analogWrite(Right_motor_back, -spd);
+        }
+    }
+    else {
+        if(spd>=0){
+            directionRight = FORWARDS;
+            digitalWrite(Left_motor_go, HIGH);
+            digitalWrite(Left_motor_back, LOW);
+            analogWrite(Left_motor_go, spd);
+        }else if(spd<0){
+            directionRight = BACKWARDS;
+            digitalWrite(Left_motor_back, HIGH);
+            digitalWrite(Left_motor_go, LOW);
+            analogWrite(Left_motor_back, -spd);
+        }
+    }
   }
 
-  // A convenience function for setting both motor speeds
-  void setMotorSpeeds(int leftSpeed, int rightSpeed) {
-    setMotorSpeed(LEFT, leftSpeed);
-    setMotorSpeed(RIGHT, rightSpeed);
-  }
-#elif defined POLOLU_MC33926
-  /* Include the Pololu library */
-  #include "DualMC33926MotorShield.h"
-
-  /* Create the motor driver object */
-  DualMC33926MotorShield drive;
-  
-  /* Wrap the motor driver initialization */
-  void initMotorController() {
-    drive.init();
-  }
-
-  /* Wrap the drive motor set speed function */
-  void setMotorSpeed(int i, int spd) {
-    if (i == LEFT) drive.setM1Speed(spd);
-    else drive.setM2Speed(spd);
-  }
-
-  // A convenience function for setting both motor speeds
   void setMotorSpeeds(int leftSpeed, int rightSpeed) {
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
@@ -60,3 +75,4 @@
 #endif
 
 #endif
+
