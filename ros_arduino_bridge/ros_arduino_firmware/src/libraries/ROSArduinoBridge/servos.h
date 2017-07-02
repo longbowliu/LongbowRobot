@@ -13,11 +13,25 @@
 int stepDelay [N_SERVOS] = { 15,15,15,15,15,15 ,15,15,15}; // ms
 
 // Pins
-//byte servoPins [N_SERVOS] = {8,11,12,13,14,15};
-byte servoPins [N_SERVOS] = {8,11,12,13,14,15,48,50,52};
+
+byte servoPins [N_SERVOS] = {11,13,12,15,8,14,50,52,53};
+
+
+// !!!!!!!!!!!!!!!!!!!frond --> behind && left--> right!!!!!!!!!!!!!!!!!!!!
+
+// 11 base plate 0，60，180
+// 13 left shoulder 0 ，130 ，130
+// 12 right shoulder 0 100 ，125 
+// 15 neck near shoulder  vetical / horizontal 5 ，5，130
+// 8 neck near clow up/down 0, 0, 180
+// 14 clow 1 ,1,110
+// 50 souna  left right 0, 80, 180
+// 52 yuntai left right 0 ,90 ,180
+// 53,yuntai up down 0,40,150
+
 
 // Initial Position
-byte servoInitPosition [N_SERVOS] = { 90, 90,120,160,1,90,90 ,90 ,90 }; // [0, 180] degrees
+byte servoInitPosition [N_SERVOS] = {60,130,100,5,0,1,80,90,40 }; // [0, 180] degrees
 
 
 class SweepServo
