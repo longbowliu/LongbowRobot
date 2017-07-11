@@ -144,23 +144,8 @@ int runCommand() {
 #ifdef USE_BASE
   case READ_ENCODERS:
     Serial.print(readEncoder(LEFT));
-    Serial.print("|");
-    Serial.print(leftPID.output);
-   /* Serial.print("@");
-    Serial.print(leftPID.TargetTicksPerFrame);
-    Serial.print("-");
-    Serial.print(leftPID.Encoder-leftPID.PrevInput);
-    */
     Serial.print(" ");
-    Serial.print(readEncoder(RIGHT));
-    Serial.print("|");
-    Serial.println(rightPID.output);
-    /*
-    Serial.print("@");
-    Serial.print(rightPID.TargetTicksPerFrame);
-    Serial.print("-");
-    Serial.println(rightPID.Encoder-rightPID.PrevInput);
-    */
+    Serial.println(readEncoder(RIGHT));
     break;
    case RESET_ENCODERS:
     resetEncoders();

@@ -79,8 +79,22 @@ void dorightID(SetPointInfo * p) {
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
   Perror = p->TargetTicksPerFrame - input;
-
-
+  /*
+  Serial.print("P");
+  Serial.print(Perror);
+   Serial.print("i");
+  Serial.print(input);
+  Serial.print("rKp");
+  Serial.print(right_Kp);
+   Serial.print("rKd");
+  Serial.print(right_Kd);
+  Serial.print("rKo");
+  Serial.print(right_Ko);
+   Serial.print("rKi");
+  Serial.println(right_Ki);
+  */
+  
+//  Serial.print("output");
   /*
   * Avoid derivative kick and allow tuning changes,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
@@ -89,27 +103,41 @@ void dorightID(SetPointInfo * p) {
   //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
   // p->PrevErr = Perror;
   output = (right_Kp * Perror - right_Kd * (input - p->PrevInput) + p->ITerm) / right_Ko;
-
+  //Serial.println(output);
   p->PrevEnc = p->Encoder;
 
   output += p->output;
   // Accumulate Integral error *or* Limit output.
   // Stop accumulating when output saturates
-
-  if (output >= MAX_PWM)
-    output = MAX_PWM;
-  else if (output <= -MAX_PWM)
-    output = -MAX_PWM;
-  else
-  /*
-  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-    p->ITerm += right_Ki * Perror;
+ // Serial.print("right = ");
+  //Serial.println(output);
+  
+  if(output>=0){
+    if(output <80){
+      output = 80;
+    }
+    else if (output >= MAX_PWM){
+      output = MAX_PWM;
+    }else{
+       p->ITerm += right_Ki * Perror;
+    }
+  }
+  else{
+    if(output>-80){
+      output = -80;
+    }
+    else if (output <= -MAX_PWM){
+      output = -MAX_PWM;
+    }else{
+       p->ITerm += right_Ki * Perror;
+    }
+  }
   
 
-
+ // Serial.print("second = ");
+  //Serial.println(output);
   p->output = output;
-
+ // Serial.print(output);
   p->PrevInput = input;
 }
 
@@ -122,7 +150,21 @@ void doleftPID(SetPointInfo * p) {
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
   Perror =p->TargetTicksPerFrame - input;
-
+  /*
+  Serial.print("P");
+  Serial.print(Perror);
+   Serial.print("i");
+  Serial.print(input);
+  Serial.print("lKp");
+  Serial.print(left_Kp);
+   Serial.print("lKd");
+  Serial.print(left_Kd);
+  Serial.print("lKo");
+  Serial.print(left_Ko);
+   Serial.print("lKi");
+  Serial.println(left_Ki);
+  */
+//  Serial.print("output");
   
   
 
@@ -134,13 +176,15 @@ void doleftPID(SetPointInfo * p) {
   //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
   // p->PrevErr = Perror;
   output = (left_Kp * Perror - left_Kd * (input - p->PrevInput) + p->ITerm) / left_Ko;
-
+//  Serial.println(output);
+//  Serial.print("output=");
+//  Serial.println(output);
   p->PrevEnc = p->Encoder;
 
   output += p->output;
   // Accumulate Integral error *or* Limit output.
   // Stop accumulating when output saturates
-  /*
+  
   if(output>=0){
     if(output <80){
       output = 80;
@@ -161,17 +205,6 @@ void doleftPID(SetPointInfo * p) {
        p->ITerm += left_Ki * Perror;
     }
   }
-  */
-  
-    if (output >= MAX_PWM)
-    output = MAX_PWM;
-  else if (output <= -MAX_PWM)
-    output = -MAX_PWM;
-  else
-  /*
-  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-    p->ITerm += left_Ki * Perror;
   
  
   /*
@@ -187,11 +220,13 @@ void doleftPID(SetPointInfo * p) {
 void updatePID() {
   /* Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
-
+//  Serial.print("leftPID.Encoder = ");
+//  Serial.print(leftPID.Encoder);
   
   rightPID.Encoder = readEncoder(RIGHT);
   
-
+//  Serial.print("rightPID.Encoder = ");
+//  Serial.println(rightPID.Encoder);
   
   /* If we're not moving there is nothing more to do */
   if (!moving){
@@ -210,15 +245,6 @@ void updatePID() {
  
 
   /* Set the motor speeds accordingly */
-  int adjustment = 0;
-  int diff = rightPID.Encoder - leftPID.Encoder;
-  if(leftPID.output>0){
-    adjustment = 30;
-    adjustment += diff*10;
-  }else{
-    adjustment = -30;
-    adjustment += -diff*10;
-  }
-  setMotorSpeeds(leftPID.output+adjustment, rightPID.output);
+  setMotorSpeeds(leftPID.output, rightPID.output);
 }
 

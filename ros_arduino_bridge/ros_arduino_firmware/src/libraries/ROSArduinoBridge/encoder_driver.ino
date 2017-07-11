@@ -16,8 +16,8 @@ volatile long right_enc_pos = 0L;
 unsigned long time1 = 0, time2 = 0; //左1，右2 轮 时间标记
 void initEncoders() {
   // attachInterrupt used pin 2, 3;
-  attachInterrupt(1, leftEncoderEvent, FALLING);
-  attachInterrupt(0, rightEncoderEvent, FALLING);
+  attachInterrupt(0, leftEncoderEvent, FALLING);
+  attachInterrupt(1, rightEncoderEvent, FALLING);
 }
 
 void leftEncoderEvent() {
