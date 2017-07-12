@@ -140,21 +140,25 @@ class Arduino:
         '''
         try:
             temp_str = self.recv(self.timeout * self.N_ANALOG_PORTS)
- 
-            values = temp_str.split()
-
-            if temp_str.find('|'):
-
+	    print "recv_array : "+temp_str
+            values = temp_str.split() 
+	                         
+            if temp_str.find('|'):                
                 i = 0
                 out = ['','']
-                list = ['','']
-                for temp in values:
-                    list = temp.split('|')
-                    values[i] = list[0]
-                    out[i] = list[1]
-                    i +=1
-                print 'out : ' + str(out)
-                print 'encoder : '+str(values)
+                v = ['','']
+                list = ['','']                
+                for temp in values:                    
+                    if temp.find('|'):
+                        print "Cont get here****************"
+			'''  
+                        # list = temp.split('|')  trouble maker                        
+                        v[i] = list[0]
+                        out[i] = list[1]
+                        i +=1
+                 print 'out : ' + str(out)
+                 print 'encoder : '+str(v)
+            '''
             return map(int, values)
         except:
             return []
@@ -243,8 +247,9 @@ class Arduino:
         
         try:
             self.port.write(cmd + '\r')
+            print "send "+cmd
             ack = self.recv(self.timeout)
-            #print "ack = " +ack
+            print "recv" +ack
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()
