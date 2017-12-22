@@ -15,9 +15,12 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
+
+
 include_directories(
   ${RPLIDAR_SDK_PATH}/include
   ${RPLIDAR_SDK_PATH}/src
+  
 )
 
 catkin_package()
