@@ -6,6 +6,7 @@
 <robot name="pi_robot" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Define a number of dimensions using properties -->
   <!-- The following xacro:include files set up definitions of parts of the robot body -->
+  <!-- Put all the color definitions in a separate file -->
   <material name="Black">
     <color rgba="0.2 0.2 0.2 1.0"/>
   </material>
@@ -39,6 +40,9 @@
   <material name="TransparentGreen">
     <color rgba="0.0 0.8 0.0 0.5"/>
   </material>
+  <!-- Define a number of dimensions using properties -->
+  <!-- define a wheel -->
+  <!-- The base xacro macro -->
   <link name="base_footprint">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -53,6 +57,7 @@
     <parent link="base_footprint"/>
     <child link="base_link"/>
   </joint>
+  <!-- Add the drive wheels -->
   <joint name="base_l_wheel_joint" type="continuous">
     <axis xyz="0 0 1"/>
     <limit effort="100" velocity="100"/>
@@ -87,6 +92,10 @@
       <material name="Orange"/>
     </visual>
   </link>
+  <!-- Define a number of dimensions using properties -->
+  <!-- Define the torso -->
+  <!-- Define a number of dimensions using properties -->
+  <!-- Define a camera link for a Kinect -->
   <!-- Now we can start using the macros included above to define the actual robot -->
   <!-- Start with the base and wheels -->
   <link name="base_link">
@@ -126,6 +135,7 @@
     </collision>
   </link>
   <!-- Attach the pan and tilt head -->
+  <!-- head base joint -->
   <joint name="head_base_joint" type="fixed">
     <origin rpy="1.570795 0 1.570795" xyz="0.0595 0.0036 0.845"/>
     <parent link="torso_link"/>
@@ -150,6 +160,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- head pan joint -->
   <joint name="head_pan_servo_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="head_base_link"/>
@@ -202,6 +213,7 @@
       </geometry>
     </collision>
   </link>
+  <!--head tilt joint -->
   <joint name="head_tilt_servo_joint" type="fixed">
     <origin rpy="0 3.14159 0" xyz="0 0 -0.0415"/>
     <parent link="head_pan_bracket_link"/>
@@ -254,6 +266,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- Attach the camera -->
   <joint name="head_tilt_bracket_camera_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0.0 0.0615"/>
     <parent link="head_tilt_bracket_link"/>
@@ -322,6 +335,39 @@
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
     </inertial>
   </link>
+  <!-- Uncomment to place white "eyes" on the Kinect
+      <link name="left_eye_link">
+         <visual>	
+            <origin xyz="0 0 0" rpy="0 ${PI/2} 0" />
+	        <geometry>
+	           <cylinder length="0.01" radius="0.01" />
+	        </geometry>
+	        <material name="OffWhite" />
+	     </visual>
+      </link>
+  
+      <link name="right_eye_link">
+         <visual>	
+            <origin xyz="0 0 0" rpy="0 ${PI/2} 0" />
+	        <geometry>
+	           <cylinder length="0.01" radius="0.01" />
+	        </geometry>
+	        <material name="OffWhite" />
+	     </visual>
+      </link>
+  
+      <joint name="left_eye_joint" type="fixed">
+         <parent link="camera_link" />
+         <child link="left_eye_link" />
+         <origin xyz="0.0275 0.035 0.015" rpy="0 0 0" />
+      </joint>
+	
+      <joint name="right_eye_joint" type="fixed">
+         <parent link="camera_link" />
+         <child link="right_eye_link" />
+         <origin xyz="0.0275 -0.035 0.015" rpy="0 0 0" />
+      </joint>
+      -->
   <!-- Attach the right arm -->
   <link name="right_arm_base_link"/>
   <joint name="right_arm_base_joint" type="fixed">
@@ -329,6 +375,7 @@
     <parent link="torso_link"/>
     <child link="right_arm_base_link"/>
   </joint>
+  <!-- shoulder pan -->
   <joint name="right_arm_shoulder_F2_0_joint" type="fixed">
     <origin rpy="1.570795 0 1.570795" xyz="0 0 0"/>
     <parent link="right_arm_base_link"/>
@@ -381,6 +428,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- shoulder lift -->
   <joint name="right_arm_shoulder_F3_0_joint" type="fixed">
     <origin rpy="0 3.14159 0" xyz="0 0 -0.0405"/>
     <parent link="right_arm_shoulder_pan_link"/>
@@ -433,6 +481,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- shoulder roll -->
   <joint name="right_arm_shoulder_F3_1_joint" type="fixed">
     <origin rpy="3.14159 0 0" xyz="0 0 -0.0405"/>
     <parent link="right_arm_shoulder_lift_link"/>
@@ -535,6 +584,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- elbow flex -->
   <joint name="right_arm_elbow_F3_0_joint" type="fixed">
     <origin rpy="1.570795 3.14159 3.14159" xyz="0 -0.01575 0"/>
     <parent link="right_arm_shoulder_roll_F9_0_link"/>
@@ -612,6 +662,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- forearm flex -->
   <joint name="right_arm_forearm_F3_0_joint" type="fixed">
     <origin rpy="3.14159 0 1.570795" xyz="0 0 0.02675"/>
     <parent link="right_arm_elbow_flex_link"/>
@@ -714,6 +765,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- wrist flex -->
   <joint name="right_arm_wrist_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
@@ -766,6 +818,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- gripper attach joint -->
   <joint name="right_arm_gripper_attach_joint" type="fixed">
     <origin rpy="3.14159 0 0" xyz="0 0 0.0005"/>
     <parent link="right_arm_wrist_F3_0_link"/>
@@ -792,6 +845,7 @@
     </collision>
   </link>
   <!-- Attach the right gripper -->
+  <!-- gripper joint -->
   <joint name="right_gripper_base_joint" type="fixed">
     <origin rpy="0 1.570795 3.14159" xyz="-0.02275 0 -0.0175"/>
     <parent link="right_arm_gripper_attach_link"/>
@@ -817,6 +871,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- finger 1 -->
   <joint name="right_gripper_finger_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
@@ -869,6 +924,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- finger 2 -->
   <joint name="right_gripper_static_finger_bracket_joint" type="fixed">
     <origin rpy="0 3.14159 0" xyz="0 0 -0.0425"/>
     <parent link="right_gripper_base_link"/>
@@ -919,6 +975,7 @@
       </geometry>
     </collision>
   </link>
+  <!-- Fake gripper link and joint for grasp planning -->
   <joint name="right_gripper_joint" type="fixed">
     <origin rpy="-1.570795 0 0" xyz="0.05 0 -0.008"/>
     <parent link="right_gripper_base_link"/>
