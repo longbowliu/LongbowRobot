@@ -38,6 +38,8 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+#include "stdio.h"
+#include "rptypes.h"
 
 #include "rplidar.h" //RPLIDAR standard sdk, all-in-one header
 
