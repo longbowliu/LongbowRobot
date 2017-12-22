@@ -50,7 +50,7 @@ target_link_libraries(camera_stereo ${catkin_LIBRARIES})
 
 add_executable(homography src/homography.cpp)
 add_dependencies(homography ${PROJECT_NAME}_gencfg)
-target_link_libraries(homography ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(homography ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
 
 install(TARGETS camera camera_timer camera_polling camera_stereo homography
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
