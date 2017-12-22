@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ""
+    relative_path: /home/llb/Downloads/llb.urdf
+  SRDF:
+    relative_path: config/diego1.srdf
+  CONFIG:
+    author_name: llb
+    author_email: llb_feng@163.com
+    generated_timestamp: 1513689386

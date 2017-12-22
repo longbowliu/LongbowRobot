@@ -1,0 +1,2 @@
+roslaunch moveit_demo move_group.launch
+roslaunch moveit_demo moveit_rviz.launch

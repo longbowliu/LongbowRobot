@@ -1,0 +1,5 @@
+roslaunch moveit_demo move_group.launch
+roslaunch moveit_demo moveit_rviz.launch
+Fixed Frame 输入： arm_base
+Displays 下面的add按钮可以添加“MotionPlanning”,添加之后在Planning里面指定Start State 和
+Goal State 。然后就可以Plan和Execute了
