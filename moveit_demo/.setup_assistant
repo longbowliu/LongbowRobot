@@ -3,7 +3,7 @@ moveit_setup_assistant_config:
     package: ""
     relative_path: /home/llb/Downloads/llb.urdf
   SRDF:
-    relative_path: config/diego1.srdf
+    relative_path: config/llb.srdf
   CONFIG:
     author_name: llb
     author_email: llb_feng@163.com

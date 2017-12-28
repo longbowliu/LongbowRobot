@@ -3,7 +3,7 @@
   <name>moveit_demo</name>
   <version>0.3.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the diego1 with the MoveIt! Motion Planning Framework
+     An automatically generated package with all the configuration and launch files for using the llb with the MoveIt! Motion Planning Framework
   </description>
   <author email="llb_feng@163.com">llb</author>
   <maintainer email="llb_feng@163.com">llb</maintainer>
