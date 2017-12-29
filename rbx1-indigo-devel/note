@@ -1,0 +1,1 @@
+1,usb_cam.launch ,如果使用的是usb摄像头，要注意其中 “pixel_format”的取值是不是yuyv
