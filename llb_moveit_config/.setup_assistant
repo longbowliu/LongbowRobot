@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: moveit_demo
+    relative_path: description/llb.urdf
+  SRDF:
+    relative_path: config/llb.srdf
+  CONFIG:
+    author_name: llb
+    author_email: llb_feng@163.com
+    generated_timestamp: 1514722333
