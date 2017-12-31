@@ -140,7 +140,7 @@ class Arduino:
         '''
         try:
             temp_str = self.recv(self.timeout * self.N_ANALOG_PORTS)
-	    print "recv_array : "+temp_str
+	    #print "recv_array : "+temp_str
             values = temp_str.split() 
 	                         
             if temp_str.find('|'):                
@@ -150,7 +150,7 @@ class Arduino:
                 list = ['','']                
                 for temp in values:                    
                     if temp.find('|'):
-                        print "Cont get here****************"
+                        #print "Cont get here****************"
 			'''  
                         # list = temp.split('|')  trouble maker                        
                         v[i] = list[0]
@@ -247,9 +247,9 @@ class Arduino:
         
         try:
             self.port.write(cmd + '\r')
-            print "send "+cmd
+            #print "send "+cmd
             ack = self.recv(self.timeout)
-            print "recv" +ack
+            #print "recv" +ack
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()
@@ -288,7 +288,7 @@ class Arduino:
         values = self.execute_array('e')
         if len(values) != 2:
             
-            print "Encoder count was not 2"
+            #print "Encoder count was not 2"
             raise SerialException
             return None
         else:
