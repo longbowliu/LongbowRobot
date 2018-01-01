@@ -1,0 +1,7 @@
+roslaunch nogrp_moveit_config demo.launch  -- interact works 
+
+
+rosrun moveit_commander moveit_commander_cmdline.py
+或
+rosrun ros_arduino_python llb_moveit_test.py
+
