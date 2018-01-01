@@ -1,0 +1,5 @@
+roslaunch llb_moveit_config llb_demo.launch
+rosrun moveit_commander moveit_commander_cmdline.py
+
+
+roslaunch llb_moveit_config moveit_rviz.launch
