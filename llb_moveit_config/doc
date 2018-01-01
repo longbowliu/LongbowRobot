@@ -1,5 +1,8 @@
 roslaunch llb_moveit_config llb_demo.launch
+
 rosrun moveit_commander moveit_commander_cmdline.py
+或
+rosrun ros_arduino_python llb_moveit_test.py
 
 
 roslaunch llb_moveit_config moveit_rviz.launch
