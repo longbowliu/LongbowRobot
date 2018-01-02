@@ -38,7 +38,7 @@ armServos={
 	       
 	      }
 	      
-armServoValues=[60,60,60,60,60,60,]
+armServoValues=[90,120,90,90,90,60]
 
 
 
