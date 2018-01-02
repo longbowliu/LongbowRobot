@@ -31,7 +31,7 @@ class MoveItDemo:
         moveit_commander.roscpp_initialize(sys.argv)
 
         # Initialize the ROS node
-        rospy.init_node('moveit_demo', anonymous=True)
+        rospy.init_node('nogrp_moveit_demo', anonymous=True)
         
  
         # Connect to the arm move group
@@ -47,7 +47,7 @@ class MoveItDemo:
         arm.set_goal_joint_tolerance(0.001)
         
         # Start the arm target in "resting" pose stored in the SRDF file
-        arm.set_named_target('arm_default_pose')
+        arm.set_named_target('pose_gao')
         
         # Plan a trajectory to the goal configuration
         traj = arm.plan()

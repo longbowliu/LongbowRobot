@@ -32,7 +32,7 @@ byte servoPins [N_SERVOS] = {2,3,4,5,6,7};
 
 
 // Initial Position
-byte servoInitPosition [N_SERVOS] = {60,60,60,60,60,60}; // [0, 180] degrees
+byte servoInitPosition [N_SERVOS] = {90,120,90,90,90,60}; // [0, 180] degrees
 
 
 class SweepServo
