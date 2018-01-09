@@ -136,28 +136,5 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>    
 
-  <link name="arm_joint_stevo3">
-    <visual>
-      <geometry>
-       <cylinder length=".12" radius="0.012"></cylinder>
-      </geometry>
-      <material name="blue">
-          <color rgba="0 0 255 1"/>
-      </material>  
-    </visual>
-  </link>  
-  
- <joint name="arm_joint_stevo2_to_arm_joint_stevo3" type="revolute">
-    <axis xyz="0 0 1"/> 
-    <parent link="arm_joint_stevo2"/>
-    <child link="arm_joint_stevo3"/>
-    <origin rpy="1.5707963 -0.52359877 0" xyz="0.00 -0.06 0.00"/>
-    <limit effort="100" velocity="100" lower="-1.5707963" upper="1.5707963"/> 
-    <joint_properties damping="0.0" friction="0.0"/>
-  </joint> 
-
-
-
-
  
  </robot>
