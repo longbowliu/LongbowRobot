@@ -27,7 +27,10 @@ add_message_files(
 catkin_package(
 #CATKIN_DEPENDS roscpp std_msgs system_lib
 #  DEPENDS system_lib
-CATKIN_DEPENDS message_runtime
+    CATKIN_DEPENDS 
+    message_runtime
+    serial
+
 )
 
 include_directories(
@@ -35,14 +38,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(aaa src/RobotTrajectoryFollower.cpp)
-add_executable(bbb src/jointserial.cpp)
+add_executable(jointcontroller src/RobotTrajectoryFollower.cpp)
+add_executable(jointserial src/jointserial.cpp)
 
-add_dependencies(aaa nogrp_moveit_config_generate_messages_cpp)
-add_dependencies(bbb nogrp_moveit_config_generate_messages_cpp)
+add_dependencies(jointcontroller nogrp_moveit_config_generate_messages_cpp)
+add_dependencies(jointserial nogrp_moveit_config_generate_messages_cpp)
 
-target_link_libraries(bbb ${catkin_LIBRARIES})
-target_link_libraries(aaa ${catkin_LIBRARIES})
+target_link_libraries(jointserial ${catkin_LIBRARIES})
+target_link_libraries(jointcontroller ${catkin_LIBRARIES})
 
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

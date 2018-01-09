@@ -1,4 +1,4 @@
-roslaunch nogrp_moveit_config demo.launch  -- interact works 
+roslaunch nogrp_moveit_config llb_demo.launch  -- interact works 
 
 
 rosrun moveit_commander moveit_commander_cmdline.py

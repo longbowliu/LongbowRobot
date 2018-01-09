@@ -20,12 +20,12 @@
   </node>
   <node name="arduino_gripper_controller" pkg="ros_arduino_python" type="diego1_gripper_controller.py" output="screen">
   </node>
-   
-   <node name="RobotTrajectoryFollower" pkg="nogrp_moveit_config" type="src/RobotTrajectoryFollower.cpp" output="screen">
+   -->
+   <node name="jointcontroller" pkg="nogrp_moveit_config" type="jointcontroller" output="screen">
   </node>
-  <node name="jointserial" pkg="nogrp_moveit_config" type="src/jointserial.cpp" output="screen">
+  <node name="jointserial" pkg="nogrp_moveit_config" type="jointserial" output="screen">
   </node>
-  -->
+  
   <!-- If needed, broadcast static tf for robot root -->
   <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world_frame base_link 100" />
 
