@@ -1,0 +1,21 @@
+roslaunch j3_moveit_config llb_demo.launch  -- interact works
+rosrun j3_moveit_config jointcontroller 
+rosrun j3_moveit_config jointserial
+
+
+rosrun moveit_commander moveit_commander_cmdline.py
+或
+rosrun ros_arduino_python llb_moveit_test.py
+
+
+
+Issue : Undefined reference to 
+
+mkdir -p ~/test_space/src
+cd ~/test_space/src/
+catkin_init_workspace
+cd ..
+catkin_make
+source devel/setup.bash
+cp -r ~/catkin_ws/src/LongbowRobot/j3_moveit_config ./src/
+catkin_make j3_moveit_config
