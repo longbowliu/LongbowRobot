@@ -1,10 +1,10 @@
 moveit_setup_assistant_config:
   URDF:
-    package: ""
-    relative_path: /home/llb/catkin_ws/src/LongbowRobot/j3_arm_moveit_config/llb.urdf
+    package: j3_arm_moveit_config
+    relative_path: llb.urdf
   SRDF:
     relative_path: config/llb.srdf
   CONFIG:
     author_name: llb
     author_email: llb_feng@163.com
-    generated_timestamp: 1515492597
+    generated_timestamp: 1515498854
