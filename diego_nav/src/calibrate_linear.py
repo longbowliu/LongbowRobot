@@ -16,9 +16,9 @@ class CalibrateLinear():
         r = rospy.Rate(self.rate)
 
         # Set the distance to travel
-        self.test_distance = 1.0 # meters
-        self.speed = 2.0 # meters per second
-        self.tolerance = 0.03 # meters
+        self.test_distance = 1.0  # meters
+        self.speed = 0.2  # meters per second
+        self.tolerance = 0.05  # meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True
 
@@ -64,24 +64,24 @@ class CalibrateLinear():
                 self.position = self.get_position()
                 
                 # Compute the Euclidean distance from the target point
-                distance = sqrt(pow((self.position.x - x_start), 2) +
+                distance = sqrt(pow((self.position.x - x_start), 2) + 
                                 pow((self.position.y - y_start), 2))
                 
 
                 # Correct the estimated distance by the correction factor
                 distance *= self.odom_linear_scale_correction
                 # How close are we?
-                error =  distance - self.test_distance
-		rospy.loginfo("error = "+str(error))
+                diff = distance - self.test_distance
+                rospy.loginfo("diff = " + str(diff))
 
                 # Are we close enough?
-                if not self.start_test or abs(error) <  self.tolerance:
+                if not self.start_test or abs(diff) < self.tolerance:
                     self.start_test = False
                     params = False
                     rospy.loginfo(params)
                 else:
                     # If not, move in the appropriate direction
-                    move_cmd.linear.x = copysign(self.speed, -1 * error)
+                    move_cmd.linear.x = copysign(self.speed, -1 * diff)
             else:
                 self.position = self.get_position()
                 x_start = self.position.x
@@ -96,7 +96,7 @@ class CalibrateLinear():
     def get_position(self):
         # Get the current transform between the odom and base frames
         try:
-            (trans, rot)  = self.tf_listener.lookupTransform(self.odom_frame, self.base_frame, rospy.Time(0))
+            (trans, rot) = self.tf_listener.lookupTransform(self.odom_frame, self.base_frame, rospy.Time(0))
         except (tf.Exception, tf.ConnectivityException, tf.LookupException):
             rospy.loginfo("TF Exception")
             return
