@@ -23,7 +23,7 @@ class CalibrateAngular():
         # The test angle is 360 degrees
         self.test_angle = 2*pi
 
-        self.speed = 0.1 # radians per second
+        self.speed = 5 # radians per second
         self.tolerance = 1 # degrees converted to radians
         self.odom_angular_scale_correction = 1
         self.start_test = True
@@ -41,7 +41,7 @@ class CalibrateAngular():
         self.tf_listener = tf.TransformListener()
         
         # Give tf some time to fill its buffer
-        rospy.sleep(2)
+        rospy.sleep(0.5)
         
         # Make sure we see the odom and base frames
         self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(60.0))

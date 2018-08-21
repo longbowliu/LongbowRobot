@@ -5,14 +5,12 @@ typedef struct {
   double TargetTicksPerFrame;    // target speed in ticks per frame
   long Encoder;                  // encoder count
   long PrevEnc;                  // last encoder count
-
   /*
   * Using previous input (PrevInput) instead of PrevError to avoid derivative kick,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
   */
   int PrevInput;                // last input
   //int PrevErr;                   // last error
-
   /*
   * Using integrated term (ITerm) instead of integrated error (Ierror),
   * to allow tuning changes,
@@ -20,7 +18,6 @@ typedef struct {
   */
   //int Ierror;
   int ITerm;                    //integrated term
-
   long output;                    // last motor setting
 }
 SetPointInfo;
@@ -71,11 +68,12 @@ void resetPID(){
 }
 
 /* PID routine to compute the next motor commands */
-void dorightID(SetPointInfo * p) {
+void doRightPID(SetPointInfo * p) {
   long Perror;
   long output;
   int input;
-
+  int limit = 79;
+  // 78 good , 0.5
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
   Perror = p->TargetTicksPerFrame - input;
@@ -113,8 +111,8 @@ void dorightID(SetPointInfo * p) {
   //Serial.println(output);
   
   if(output>=0){
-    if(output <80){
-      output = 80;
+    if(output <limit){
+      output = limit;
     }
     else if (output >= MAX_PWM){
       output = MAX_PWM;
@@ -123,8 +121,8 @@ void dorightID(SetPointInfo * p) {
     }
   }
   else{
-    if(output>-80){
-      output = -80;
+    if(output>-limit){
+      output = -limit;
     }
     else if (output <= -MAX_PWM){
       output = -MAX_PWM;
@@ -132,6 +130,7 @@ void dorightID(SetPointInfo * p) {
        p->ITerm += right_Ki * Perror;
     }
   }
+  
   
 
  // Serial.print("second = ");
@@ -142,52 +141,23 @@ void dorightID(SetPointInfo * p) {
 }
 
 /* PID routine to compute the next motor commands */
-void doleftPID(SetPointInfo * p) {
+void doLeftPID(SetPointInfo * p) {
   long Perror;
   long output;
   int input;
+  int limit = 93;
+  // at least 93 , 93 goo ,0.5
   
-  //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
   Perror =p->TargetTicksPerFrame - input;
-  /*
-  Serial.print("P");
-  Serial.print(Perror);
-   Serial.print("i");
-  Serial.print(input);
-  Serial.print("lKp");
-  Serial.print(left_Kp);
-   Serial.print("lKd");
-  Serial.print(left_Kd);
-  Serial.print("lKo");
-  Serial.print(left_Ko);
-   Serial.print("lKi");
-  Serial.println(left_Ki);
-  */
-//  Serial.print("output");
-  
-  
-
-  /*
-  * Avoid derivative kick and allow tuning changes,
-  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
-  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-  //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
-  // p->PrevErr = Perror;
   output = (left_Kp * Perror - left_Kd * (input - p->PrevInput) + p->ITerm) / left_Ko;
-//  Serial.println(output);
-//  Serial.print("output=");
-//  Serial.println(output);
   p->PrevEnc = p->Encoder;
 
   output += p->output;
-  // Accumulate Integral error *or* Limit output.
-  // Stop accumulating when output saturates
   
   if(output>=0){
-    if(output <80){
-      output = 80;
+    if(output <limit){
+      output = limit;
     }
     else if (output >= MAX_PWM){
       output = MAX_PWM;
@@ -196,8 +166,8 @@ void doleftPID(SetPointInfo * p) {
     }
   }
   else{
-    if(output>-80){
-      output = -80;
+    if(output>-limit){
+      output = -limit;
     }
     else if (output <= -MAX_PWM){
       output = -MAX_PWM;
@@ -206,12 +176,6 @@ void doleftPID(SetPointInfo * p) {
     }
   }
   
- 
-  /*
-  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-   
-
   p->output = output;
   p->PrevInput = input;
 }
@@ -240,8 +204,8 @@ void updatePID() {
     return;
   }
 
-  doleftPID(&leftPID);//执行左马达PID
-  dorightID(&rightPID);//执行右马达PID
+  doLeftPID(&leftPID);//执行左马达PID
+  doRightPID(&rightPID);//执行右马达PID
  
 
   /* Set the motor speeds accordingly */

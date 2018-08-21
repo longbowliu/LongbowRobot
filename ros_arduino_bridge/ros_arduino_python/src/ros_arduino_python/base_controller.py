@@ -63,6 +63,7 @@ class BaseController:
 
         # How many encoder ticks are there per meter?
         self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
+        #print 'self.ticks_per_meter = ', self.ticks_per_meter
 
         # What is the maximum acceleration we will tolerate when changing wheel speeds?
         self.max_accel = self.accel_limit * self.ticks_per_meter / self.rate
@@ -210,8 +211,8 @@ class BaseController:
                 self.v_des_left = 0
                 self.v_des_right = 0
                 
-            #print "longbow : v_left  " +  str(self.v_left)
-            #print "longbow : v_des_left  " +  str(self.v_des_left)
+#             print "longbow : v_left  " +  str(self.v_left)
+#             print "longbow : v_des_left  " +  str(self.v_des_left)
             #print "longbow : max_accel  " +  str(self.max_accel)
             if self.v_left < self.v_des_left:
                 self.v_left += self.max_accel
@@ -222,8 +223,8 @@ class BaseController:
                 if self.v_left < self.v_des_left:
                     self.v_left = self.v_des_left
                     
-            #print "longbow1 : v_right  " +  str(self.v_right)
-            #print "longbow1 : v_des_right  " +  str(self.v_des_right)
+#             print "longbow1 : v_right  " +  str(self.v_right)
+#             print "longbow1 : v_des_right  " +  str(self.v_des_right)
             if self.v_right < self.v_des_right:
                 self.v_right += self.max_accel
                 if self.v_right > self.v_des_right:
@@ -236,8 +237,8 @@ class BaseController:
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
                 self.arduino.drive(self.v_left, self.v_right)
-                #print " v_right: "+str(self.v_right)
-                #print "v_left : "+str(self.v_left)
+                print " v_right: "+str(self.v_right)
+                print "v_left : "+str(self.v_left)
                 
             self.t_next = now + self.t_delta
             
@@ -251,29 +252,34 @@ class BaseController:
         
         x = req.linear.x         # m/s
         th = req.angular.z       # rad/s
-
-        if x == 0:
+#         print 'llb th = ',th
+        if x == 0: # Turn round
+#             print 1
             # Turn in place
             right = th * self.wheel_track  * self.gear_reduction / 2.0
             left = -right
-        elif th == 0:
+#             print 'x = ',x , ' th = ', th, ' left = ',left,' right = ',right
+        elif th == 0: # Go straight
+#             print 2
             # Pure forward/backward motion
             left = right = x
+#             print 'x = ',x , ' th = ', th, ' left = ',left,' right = ',right
         else:
+#             print 3
             # Rotation about a point in space
             left = x - th * self.wheel_track  * self.gear_reduction / 2.0
             right = x + th * self.wheel_track  * self.gear_reduction / 2.0
-            
        # print " left = "+str(left)
         #print "self.ticks_per_meter = "+str(self.ticks_per_meter)
         #print "self.arduino.PID_RATE = "+str(self.arduino.PID_RATE)
         #print " right = "+str(right)
-        
-       
+#         print "################&&&&&&&&&&&&", self.ticks_per_meter
+#         print "################&&&&&&&&&&&&",left * self.ticks_per_meter / self.arduino.PID_RATE
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
-        print " self.v_des_left  = "+str(self.v_des_left )
-        print " self.v_des_left  = "+str(self.v_des_left ) 
+#         if self.v_des_left > 0 or self.v_des_right > 0 : 
+#              print " self.v_des_left  = "+str(self.v_des_left )
+#              print " self.v_des_right  = "+str(self.v_des_right ) 
         
 
         

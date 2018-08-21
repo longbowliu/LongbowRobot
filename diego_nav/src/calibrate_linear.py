@@ -17,7 +17,7 @@ class CalibrateLinear():
 
         # Set the distance to travel
         self.test_distance = 1.0  # meters
-        self.speed = 0.2  # meters per second
+        self.speed = 0.5  # meters per second
         self.tolerance = 0.05  # meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True
@@ -35,7 +35,7 @@ class CalibrateLinear():
         self.tf_listener = tf.TransformListener()
 
         # Give tf some time to fill its buffer
-        rospy.sleep(2)
+        rospy.sleep(0.5)
 
         # Make sure we see the odom and base frames
         self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(60.0))

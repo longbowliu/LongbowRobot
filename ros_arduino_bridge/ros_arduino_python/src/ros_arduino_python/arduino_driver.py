@@ -149,8 +149,8 @@ class Arduino:
                 v = ['','']
                 list = ['','']                
                 for temp in values:                    
-                    if temp.find('|'):
-                        print "Cont get here****************"
+                    if temp.find('|') >= 0 :
+                        print "Cont get here****************",values, '  llb  = ', temp.find('|')
 			'''  
                         # list = temp.split('|')  trouble maker                        
                         v[i] = list[0]
