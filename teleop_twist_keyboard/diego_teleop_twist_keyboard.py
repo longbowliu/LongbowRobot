@@ -7,6 +7,13 @@ import sys, select, termios, tty
 
 msg = """
 Reading from the keyboard  and Publishing to Twist, Servo or sensor!
+---------------------------
+Moving around:
+   u    i    o
+   j    k    l
+
+, : up (+z)
+. : down (-z)
 
 ----------------------------
 Left arm servo control:
@@ -73,7 +80,7 @@ if __name__=="__main__":
 
 	try:
 		print msg
-
+        
 		servoWrite(0, armServoValues[0])
 		servoWrite(1, armServoValues[1])
 		servoWrite(2, armServoValues[2])
