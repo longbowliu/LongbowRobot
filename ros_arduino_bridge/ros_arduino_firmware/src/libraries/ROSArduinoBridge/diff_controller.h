@@ -72,7 +72,7 @@ void doRightPID(SetPointInfo * p) {
   long Perror;
   long output;
   int input;
-  int limit = 79;
+  int limit = 0;
   // 78 good , 0.5
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
@@ -145,7 +145,7 @@ void doLeftPID(SetPointInfo * p) {
   long Perror;
   long output;
   int input;
-  int limit = 93;
+  int limit = 0;
   // at least 93 , 93 goo ,0.5
   
   input = p->Encoder - p->PrevEnc;
@@ -206,8 +206,12 @@ void updatePID() {
 
   doLeftPID(&leftPID);//执行左马达PID
   doRightPID(&rightPID);//执行右马达PID
- 
-
+   
+  Serial.print("longbow~~~~~~~~~~~");
+  Serial.print(leftPID.output);
+  Serial.print("    ");
+  Serial.println(rightPID.output);
+  
   /* Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
 }

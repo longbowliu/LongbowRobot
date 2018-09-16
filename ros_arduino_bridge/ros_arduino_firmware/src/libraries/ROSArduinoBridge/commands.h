@@ -20,8 +20,7 @@
   #define ANALOG_WRITE   'x'
   #define LEFT            0
   #define RIGHT           1
-  #define FORWARDS        true
-  #define BACKWARDS       false
+
 
 #endif
 

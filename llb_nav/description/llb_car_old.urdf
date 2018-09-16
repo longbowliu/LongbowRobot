@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+
+<robot name="llb_car"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+
+	<link name="base_link">
+		<visual>
+			<geometry>
+				<box size=".3 .1 .05" />
+			</geometry>
+			<origin rpy="0 0 0" xyz="0 0 0.05" />
+			<material name="white">
+				<color rgba="1 1 1 1" />
+			</material>
+		</visual>
+	</link>
+
+	<link name="wheel1">
+		<visual>
+			<geometry>
+				<cylinder length="0.02" radius="0.032" />
+			</geometry>
+			<origin rpy="1.57 0  0" xyz="0 0 0" />
+			<material name="black">
+				<color rgba="0 0 0 1" />
+			</material>
+		</visual>
+	</link>
+
+
+	<joint name="joint_base_wheel1" type="revolute">
+		<axis xyz="1 0 0" />
+		<parent link="base_link" />
+		<child link="wheel1" />
+		<origin rpy="0 0 0" xyz="0.05 0.065 0.0" />
+		<limit effort="100" velocity="100" lower="-1.5707963" upper="1.5707963" />
+		<joint_properties damping="0.0" friction="0.0" />
+	</joint>
+
+	<link name="wheel2">
+		<visual>
+			<geometry>
+				<cylinder length="0.02" radius="0.032" />
+			</geometry>
+			<origin rpy="1.57 0 0" xyz="0 0 0" />
+			<material name="black">
+				<color rgba="0 0 0 1" />
+			</material>
+		</visual>
+	</link>
+	<joint name="joint_base_wheel2" type="continuous">
+		<axis xyz="1 0 0" />
+		<parent link="base_link" />
+		<child link="wheel2" />
+		<origin rpy="0 0 0" xyz="0.05 -0.065 0.0" />
+	</joint>
+
+	<link name="wheel3">
+		<visual>
+			<geometry>
+				<sphere radius="0.032" />
+			</geometry>
+			<origin rpy="0 0 0" xyz="0 0 0" />
+			<material name="black">
+				<color rgba="0 0 0 1" />
+			</material>
+		</visual>
+	</link>
+	<joint name="joint_base_wheel3" type="fixed">
+		<axis xyz="1 1 1" />
+		<parent link="base_link" />
+		<child link="wheel3" />
+		<origin rpy="0 0 0" xyz="-0.05 0 0.0" />
+	</joint>
+
+	<link name="camera_link">
+		<visual>
+			<geometry>
+				<box size="0.02 .08 .02" />
+			</geometry>
+			<material name="blue">
+				<color rgba="0 0 255 1" />
+			</material>
+		</visual>
+	</link>
+
+	<joint name="camera_link_to_base_link" type="fixed">
+		<parent link="base_link" />
+		<child link="camera_link" />
+		<origin rpy="0 0 0" xyz="0.13 0.0 0.13" />
+	</joint>
+
+	<link name="camera_depth_frame">
+		<visual>
+			<geometry>
+				<box size="0.005 .005 .005" />
+			</geometry>
+			<material name="blue">
+				<color rgba="0 0 255 1" />
+			</material>
+		</visual>
+	</link>
+
+	<joint name="camera_depth_joint" type="fixed">
+		<origin xyz="0 0 0.01" rpy="0 0 0" />
+		<parent link="camera_link" />
+		<child link="camera_depth_frame" />
+	</joint>
+
+	<link name="camera_depth_optical_frame">
+		<visual>
+			<geometry>
+				<box size="0.005 .005 .005" />
+			</geometry>
+			<material name="blue">
+				<color rgba="0 0 255 1" />
+			</material>
+		</visual>
+	</link>
+
+	<joint name="depth_optical_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="-1.57 0 -1.57" />
+		<parent link="camera_depth_frame" />
+		<child link="camera_depth_optical_frame" />
+	</joint>
+
+</robot>
+

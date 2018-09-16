@@ -103,7 +103,7 @@ int runCommand() {
   int pid_args[8];
   arg1 = atoi(argv1);
   arg2 = atoi(argv2);
-
+  Serial.println(cmd);
   switch(cmd) {
   case GET_BAUDRATE:
     Serial.println(BAUDRATE);
@@ -192,7 +192,7 @@ int runCommand() {
 /* Setup function--runs once at startup. */
 void setup() {
   Serial.begin(BAUDRATE);
-
+  //Serial.println("test");
 // Initialize the motor controller if used */
 #ifdef USE_BASE
   #ifdef ARDUINO_ENC_COUNTER
@@ -239,12 +239,13 @@ void setup() {
 */
 void loop() {
   while (Serial.available() > 0) {
-
+    //Serial.println("asdf");
     // Read the next character
     chr = Serial.read();
 
     // Terminate a command with a CR
     if (chr == 13) {
+      //Serial.println("8888");
       if (arg == 1) argv1[index] = NULL;
       else if (arg == 2) argv2[index] = NULL;
       runCommand();
