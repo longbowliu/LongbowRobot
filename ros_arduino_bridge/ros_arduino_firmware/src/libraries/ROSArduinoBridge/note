@@ -1,0 +1,1 @@
+1， 下位机arduino不能有无关的 Serial.print()信息，因为ros端要根据串口数据进行处理

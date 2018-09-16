@@ -43,12 +43,14 @@
   void setMotorSpeed(int i, int spd) {
     
     digitalWrite(STBY, HIGH);
+    /*
     if(spd != 0){
       Serial.print("abc : i = ");
       Serial.print(i);
       Serial.print(" ;spd = ");
       Serial.println(spd);
     }
+    */
     
     if(spd>MAX_PWM){
       spd=MAX_PWM;
@@ -57,12 +59,14 @@
       spd=-1*MAX_PWM;
     }
     if (i == RIGHT){
+      /*
       if(spd != 0){
         Serial.print("i = ");
         Serial.print(i);
         Serial.print(" ;spd = ");
         Serial.println(spd);
       }
+      */
         if(spd>=0){
             //directionLeft = FORWARDS;
             digitalWrite(Right_motor_go, HIGH);
@@ -76,12 +80,14 @@
         }
     }
     else {
+    	/*
         if(spd != 0){
         Serial.print("i = ");
         Serial.print(i);
         Serial.print(" ;spd = ");
         Serial.println(spd);
       }
+      */
         if(spd>=0){
             //directionRight = FORWARDS;
             digitalWrite(Left_motor_go, HIGH);

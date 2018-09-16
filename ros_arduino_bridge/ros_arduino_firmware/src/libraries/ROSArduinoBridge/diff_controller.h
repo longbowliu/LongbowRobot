@@ -206,12 +206,12 @@ void updatePID() {
 
   doLeftPID(&leftPID);//执行左马达PID
   doRightPID(&rightPID);//执行右马达PID
-   
+  /*
   Serial.print("longbow~~~~~~~~~~~");
   Serial.print(leftPID.output);
   Serial.print("    ");
   Serial.println(rightPID.output);
-  
+  */
   /* Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
 }
