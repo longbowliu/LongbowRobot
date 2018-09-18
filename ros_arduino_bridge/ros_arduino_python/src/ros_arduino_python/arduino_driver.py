@@ -28,6 +28,7 @@ import time
 import sys, traceback
 from serial.serialutil import SerialException
 from serial import Serial
+from datetime import date , datetime
 
 SERVO_MAX = 180
 SERVO_MIN = 0
@@ -248,8 +249,9 @@ class Arduino:
         try:
             self.port.write(cmd + '\r')
             print "send "+cmd
+            print datetime.now()
             ack = self.recv(self.timeout)
-            print "recv" +ack
+            print "recv : " +ack
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()

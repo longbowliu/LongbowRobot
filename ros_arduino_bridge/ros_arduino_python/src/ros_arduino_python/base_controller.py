@@ -45,7 +45,7 @@ class BaseController:
         pid_params['encoder_resolution'] = rospy.get_param("~encoder_resolution", "") 
         pid_params['gear_reduction'] = rospy.get_param("~gear_reduction", 1.0)
 
-        #modify by william 
+        # modify by william 
         pid_params['left_Kp'] = rospy.get_param("~left_Kp", 20)
         pid_params['left_Kd'] = rospy.get_param("~left_Kd", 12)
         pid_params['left_Ki'] = rospy.get_param("~left_Ki", 0)
@@ -62,8 +62,8 @@ class BaseController:
         self.setup_pid(pid_params)
 
         # How many encoder ticks are there per meter?
-        self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
-        #print 'self.ticks_per_meter = ', self.ticks_per_meter
+        self.ticks_per_meter = self.encoder_resolution * self.gear_reduction / (self.wheel_diameter * pi)
+        # print 'self.ticks_per_meter = ', self.ticks_per_meter
 
         # What is the maximum acceleration we will tolerate when changing wheel speeds?
         self.max_accel = self.accel_limit * self.ticks_per_meter / self.rate
@@ -72,21 +72,23 @@ class BaseController:
         self.bad_encoder_count = 0
 
         now = rospy.Time.now()    
-        self.then = now # time for determining dx/dy
+        self.then = now  # time for determining dx/dy
         self.t_delta = rospy.Duration(1.0 / self.rate)
         self.t_next = now + self.t_delta
 
         # internal data        
-        self.enc_left = None            # encoder readings
+        self.enc_left = None  # encoder readings
         self.enc_right = None
-        self.x = 0                      # position in xy plane
+        self.x = 0  # position in xy plane
         self.y = 0
-        self.th = 0                     # rotation in radians
+        self.th = 0  # rotation in radians
         self.v_left = 0
         self.v_right = 0
-        self.v_des_left = 0             # cmd_vel setpoint
+        self.v_des_left = 0  # cmd_vel setpoint
         self.v_des_right = 0
         self.last_cmd_vel = now
+        self.last_R = 0
+        self.last_L = 0
 
         # subscriptions
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCallback)
@@ -117,14 +119,14 @@ class BaseController:
         self.encoder_resolution = pid_params['encoder_resolution']
         self.gear_reduction = pid_params['gear_reduction']
 
-        #self.Kp = pid_params['Kp']
-        #self.Kd = pid_params['Kd']
-        #self.Ki = pid_params['Ki']
-        #self.Ko = pid_params['Ko']
+        # self.Kp = pid_params['Kp']
+        # self.Kd = pid_params['Kd']
+        # self.Ki = pid_params['Ki']
+        # self.Ko = pid_params['Ko']
 
-        #self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
+        # self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
 
-        #modify by william
+        # modify by william
         self.left_Kp = pid_params['left_Kp']
         self.left_Kd = pid_params['left_Kd']
         self.left_Ki = pid_params['left_Ki']
@@ -158,11 +160,15 @@ class BaseController:
             else:
                 dright = (right_enc - self.enc_right) / self.ticks_per_meter
                 dleft = (left_enc - self.enc_left) / self.ticks_per_meter
+            temp_R = right_enc-self.last_R  
+            temp_L = left_enc-self.last_L
+            print "right_dif : " + str(temp_R)+"   left_dif : " + str(temp_L)
+            self.last_R = right_enc
+            self.last_L = left_enc
 
             self.enc_right = right_enc
             self.enc_left = left_enc
-	    #print "right_enc : "+str(right_enc)
-	    #print "left_enc : "+str(left_enc)
+           
             
             dxy_ave = (dright + dleft) / 2.0
             dth = (dright - dleft) / self.wheel_track
@@ -186,7 +192,7 @@ class BaseController:
     
             # Create the odometry transform frame broadcaster.
             self.odomBroadcaster.sendTransform(
-                (self.x, self.y, 0), 
+                (self.x, self.y, 0),
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
                 rospy.Time.now(),
                 self.base_frame,
@@ -213,7 +219,7 @@ class BaseController:
                 
 #             print "longbow : v_left  " +  str(self.v_left)
 #             print "longbow : v_des_left  " +  str(self.v_des_left)
-            #print "longbow : max_accel  " +  str(self.max_accel)
+            # print "longbow : max_accel  " +  str(self.max_accel)
             if self.v_left < self.v_des_left:
                 self.v_left += self.max_accel
                 if self.v_left > self.v_des_left:
@@ -237,8 +243,8 @@ class BaseController:
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
                 self.arduino.drive(self.v_left, self.v_right)
-                print " v_right: "+str(self.v_right)
-                print "v_left : "+str(self.v_left)
+#                 print " v_right: "+str(self.v_right)
+#                 print "v_left : "+str(self.v_left)
                 
             self.t_next = now + self.t_delta
             
@@ -250,16 +256,16 @@ class BaseController:
         # Handle velocity-based movement requests
         self.last_cmd_vel = rospy.Time.now()
         
-        x = req.linear.x         # m/s
-        th = req.angular.z       # rad/s
+        x = req.linear.x  # m/s
+        th = req.angular.z  # rad/s
 #         print 'llb th = ',th
-        if x == 0: # Turn round
+        if x == 0:  # Turn round
 #             print 1
             # Turn in place
-            right = th * self.wheel_track  * self.gear_reduction / 2.0
+            right = th * self.wheel_track * self.gear_reduction / 2.0
             left = -right
 #             print 'x = ',x , ' th = ', th, ' left = ',left,' right = ',right
-        elif th == 0: # Go straight
+        elif th == 0:  # Go straight
 #             print 2
             # Pure forward/backward motion
             left = right = x
@@ -267,12 +273,12 @@ class BaseController:
         else:
 #             print 3
             # Rotation about a point in space
-            left = x - th * self.wheel_track  * self.gear_reduction / 2.0
-            right = x + th * self.wheel_track  * self.gear_reduction / 2.0
+            left = x - th * self.wheel_track * self.gear_reduction / 2.0
+            right = x + th * self.wheel_track * self.gear_reduction / 2.0
        # print " left = "+str(left)
-        #print "self.ticks_per_meter = "+str(self.ticks_per_meter)
-        #print "self.arduino.PID_RATE = "+str(self.arduino.PID_RATE)
-        #print " right = "+str(right)
+        # print "self.ticks_per_meter = "+str(self.ticks_per_meter)
+        # print "self.arduino.PID_RATE = "+str(self.arduino.PID_RATE)
+        # print " right = "+str(right)
 #         print "################&&&&&&&&&&&&", self.ticks_per_meter
 #         print "################&&&&&&&&&&&&",left * self.ticks_per_meter / self.arduino.PID_RATE
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
