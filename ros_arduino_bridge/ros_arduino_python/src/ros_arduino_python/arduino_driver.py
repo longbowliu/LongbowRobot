@@ -249,7 +249,7 @@ class Arduino:
         try:
             self.port.write(cmd + '\r')
             print "send "+cmd
-            print datetime.now()
+#             print datetime.now()
             ack = self.recv(self.timeout)
             print "recv : " +ack
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
