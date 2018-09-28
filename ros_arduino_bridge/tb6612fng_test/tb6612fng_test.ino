@@ -28,7 +28,7 @@ char argv2[32];
 
 long arg1;
 long arg2;
-#define AUTO_STOP_INTERVAL 4000
+#define AUTO_STOP_INTERVAL 8000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 void setup() {
@@ -139,7 +139,7 @@ int runCommand() {
 			moving = 1;
 		leftPID.TargetTicksPerFrame = arg1; 
 		rightPID.TargetTicksPerFrame = arg2;
-		Serial.println("OK");
+		//Serial.println("OK");
 		break;
 
 	default:

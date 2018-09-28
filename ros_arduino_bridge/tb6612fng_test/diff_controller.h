@@ -24,19 +24,12 @@ typedef struct {
 	 * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
 	 */
 	//int Ierror;
-	int ITerm;                    //integrated term
+	double ITerm;                    //integrated term
 
-	long output;                    // last motor setting
+	double output;                    // last motor setting
 } SetPointInfo;
 
 SetPointInfo leftPID, rightPID;
-
-/* PID Parameters */
-// 0.03 : 60-1100;   0.01 :1200-1800   0.002 2500-3000
-double Kp = 0.01;
-double Kd = 0;
-double Ki = 0;
-double Ko = 1;
 
 unsigned char moving = 0; // is the base in motion?
 
@@ -64,50 +57,73 @@ void resetPID() {
 	rightPID.ITerm = 0;
 }
 
+/* PID Parameters 
+
+*** it is better to keep the kd less than 0.35****
+
+//kp= 0.01
+//kd=0.02
+//ki= 0.00003
+//150-1500
+
+kp= 0.006
+kd= 0.006
+ki= 0.00001
+150 - 1800
+
+
+kp= 0.001
+kd= 0.003
+ki= 0.000001
+1800-4200
+
+
+*/
+// 0.03 : 60-1100;   0.01 :1200-1800   0.002 2500-3000
+double Kp = 0.006;
+double Kd = 0.006;
+double Ki = 0.00001;
+//double Ki = 0;
+double Ko = 1;
+
 /* PID routine to compute the next motor commands */
 void doPID(SetPointInfo * p) {
+        if(p->TargetTicksPerFrame>1800){
+          Kp = 0.001;
+          Kd = 0.003;
+          Ki = 0.000001;
+        }
 	long Perror;
-	long output;
+	double output;
 	int input;
-    
-
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 	input = p->Encoder - p->PrevEnc;
 	Perror = p->TargetTicksPerFrame - input;
-	if(p->TargetTicksPerFrame <0 ){
-		Perror = p->TargetTicksPerFrame + input;
-	}
-        //Serial.print(Kp );
 	Serial.print("Perror_L:");
 	Serial.print(Perror);
 	Serial.print(" input_L:");
 	Serial.print(input);
-	/*
-	 * Avoid derivative kick and allow tuning changes,
-	 * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
-	 * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-	 */
-	//output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
-	// p->PrevErr = Perror;
+
+	if(p->TargetTicksPerFrame <0 ){
+		Perror = p->TargetTicksPerFrame + input;
+	}
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
-
 	output += p->output;
+	p->ITerm += Ki * Perror;
+	
+
+        Serial.print(" Kd:");
+	Serial.print(Kd * (input - p->PrevInput));
+	Serial.print(" p->ITerm:");
+	Serial.print(p->ITerm);
 	Serial.print(" output_L:");
 	Serial.println(output);
-	// Accumulate Integral error *or* Limit output.
-	// Stop accumulating when output saturates
-//  if (output >= MAX_PWM)
-//    output = MAX_PWM;
-//  else if (output <= -MAX_PWM)
-//    output = -MAX_PWM;
-//  else
-	/*
-	 * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-	 */
-	p->ITerm += Ki * Perror;
-	p->output = output;
+
+        p->output = output;
 	p->PrevInput = input;
+
+       
 }
 
 /* Read the encoder values and call the PID routine */
@@ -132,9 +148,19 @@ void updatePID() {
 	/* Compute PID update for each motor */
 	doPID(&rightPID);
 	doPID(&leftPID);
-
+/*
+        Serial.print("leftPID.output : ");
+        Serial.print(leftPID.output);
+        Serial.print(" & ");
+        Serial.print((int)(leftPID.output+0.5));
+        Serial.print("rightPID.output : ");
+        Serial.print(rightPID.output);
+        Serial.print(" & ");
+        Serial.println((int)(rightPID.output+0.5));
+        */
 	/* Set the motor speeds accordingly */
-	setMotorSpeeds(leftPID.output, rightPID.output);
+	//setMotorSpeeds(leftPID.output, rightPID.output);
+        setMotorSpeeds((int)(leftPID.output+0.5), (int)(rightPID.output+0.5));
         delay(33);
 }
 
