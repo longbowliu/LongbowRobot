@@ -46,14 +46,14 @@ class BaseController:
         pid_params['gear_reduction'] = rospy.get_param("~gear_reduction", 1.0)
 
         # modify by william 
-        pid_params['left_Kp'] = rospy.get_param("~left_Kp", 20)
-        pid_params['left_Kd'] = rospy.get_param("~left_Kd", 12)
-        pid_params['left_Ki'] = rospy.get_param("~left_Ki", 0)
-        pid_params['left_Ko'] = rospy.get_param("~left_Ko", 50)
-        pid_params['right_Kp'] = rospy.get_param("~right_Kp", 20)
-        pid_params['right_Kd'] = rospy.get_param("~right_Kd", 12)
-        pid_params['right_Ki'] = rospy.get_param("~right_Ki", 0)
-        pid_params['right_Ko'] = rospy.get_param("~right_Ko", 50)
+        pid_params['Kp'] = rospy.get_param("~left_Kp", 0.006)
+        pid_params['Kd'] = rospy.get_param("~left_Kd", 0.006)
+        pid_params['Ki'] = rospy.get_param("~left_Ki", 0.0001)
+        pid_params['Ko'] = rospy.get_param("~left_Ko", 1)
+#         pid_params['right_Kp'] = rospy.get_param("~right_Kp", 0.006)
+#         pid_params['right_Kd'] = rospy.get_param("~right_Kd", 0.006)
+#         pid_params['right_Ki'] = rospy.get_param("~right_Ki", 0.00001)
+#         pid_params['right_Ko'] = rospy.get_param("~right_Ko", 1)
 
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
@@ -119,24 +119,25 @@ class BaseController:
         self.encoder_resolution = pid_params['encoder_resolution']
         self.gear_reduction = pid_params['gear_reduction']
 
-        # self.Kp = pid_params['Kp']
-        # self.Kd = pid_params['Kd']
-        # self.Ki = pid_params['Ki']
-        # self.Ko = pid_params['Ko']
+        self.Kp = pid_params['Kp']
+        self.Kd = pid_params['Kd']
+        self.Ki = pid_params['Ki']
+        self.Ko = pid_params['Ko']
 
         # self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
 
         # modify by william
-        self.left_Kp = pid_params['left_Kp']
-        self.left_Kd = pid_params['left_Kd']
-        self.left_Ki = pid_params['left_Ki']
-        self.left_Ko = pid_params['left_Ko']
-
-        self.right_Kp = pid_params['right_Kp']
-        self.right_Kd = pid_params['right_Kd']
-        self.right_Ki = pid_params['right_Ki']
-        self.right_Ko = pid_params['right_Ko']
-        self.arduino.update_pid(self.left_Kp, self.left_Kd, self.left_Ki, self.left_Ko, self.right_Kp, self.right_Kd, self.right_Ki, self.right_Ko)
+#         self.left_Kp = pid_params['left_Kp']
+#         self.left_Kd = pid_params['left_Kd']
+#         self.left_Ki = pid_params['left_Ki']
+#         self.left_Ko = pid_params['left_Ko']
+# 
+#         self.right_Kp = pid_params['right_Kp']
+#         self.right_Kd = pid_params['right_Kd']
+#         self.right_Ki = pid_params['right_Ki']
+#         self.right_Ko = pid_params['right_Ko']
+#         self.arduino.update_pid(self.left_Kp, self.left_Kd, self.left_Ki, self.left_Ko, self.right_Kp, self.right_Kd, self.right_Ki, self.right_Ko)
+        self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
 
     def poll(self):
         now = rospy.Time.now()
@@ -162,7 +163,7 @@ class BaseController:
                 dleft = (left_enc - self.enc_left) / self.ticks_per_meter
             temp_R = right_enc-self.last_R  
             temp_L = left_enc-self.last_L
-            print "right_dif : " + str(temp_R)+"   left_dif : " + str(temp_L)
+#             print "right_dif : " + str(temp_R)+"   left_dif : " + str(temp_L)
             self.last_R = right_enc
             self.last_L = left_enc
 

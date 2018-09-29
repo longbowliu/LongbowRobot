@@ -4,7 +4,7 @@
 # /dev/ttyUSB# where # is a number such as 0, 1, 2, etc.
 
 port: /dev/ttyUSB0
-baud: 57600
+baud: 19200
 timeout: 0.1
 
 rate: 50
@@ -24,21 +24,21 @@ gear_reduction: 30
 #motors_reversed: True
 
 # === PID parameters
-Kp: 10
-Kd: 12
-Ki: 0
-Ko: 40
+Kp: 0.006
+Kd: 0.006
+Ki: 0.00001
+Ko: 1
 accel_limit: 1.0
 
-left_Kp: 10
-left_Kd: 12
-left_Ki: 0
-left_Ko: 10
+#left_Kp: 0.006
+#left_Kd: 0.006
+#left_Ki: 0
+#left_Ko: 1
 
-right_Kp: 10
-right_Kd: 12
-right_Ki: 0
-right_Ko: 10
+#right_Kp: 0.006
+#right_Kd: 0.006
+#right_Ki: 0.00001
+#right_Ko: 1
 
 # === Sensor definitions.  Examples only - edit for your robot.
 #     Sensor type can be one of the follow (case sensitive!):

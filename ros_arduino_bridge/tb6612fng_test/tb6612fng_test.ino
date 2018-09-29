@@ -28,15 +28,24 @@ char argv2[32];
 
 long arg1;
 long arg2;
-#define AUTO_STOP_INTERVAL 2000
+
+#define PID_RATE           30
+/* Convert the rate into an interval */
+int PID_INTERVAL = 1000 / PID_RATE;
+
+/* Track the next time we make a PID calculation */
+unsigned long nextPID = PID_INTERVAL;
+
+#define AUTO_STOP_INTERVAL 9000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 void setup() {
+	Serial.begin(19200);
+
 	initMotorController();
 
 	initEncoders();
 
-	Serial.begin(19200);
 }
 
 void loop() {
@@ -79,38 +88,17 @@ void loop() {
 		}
 	}
 
-// If we are using base control, run a PID calculation at the appropriate intervals
-//  #ifdef USE_BASE
-	//  if (millis() > nextPID) {
-	//    updatePID();
-	//    nextPID += PID_INTERVAL;
-	//  }
-	updatePID();
-	//delay(33);
+	if (millis() > nextPID) {
+		updatePID();
+		nextPID += PID_INTERVAL;
+	}
 
 	// Check to see if we have exceeded the auto-stop interval
 	if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
 		setMotorSpeeds(0, 0);
 		moving = 0;
 	}
-//  #endif
-	/*
-	 for(int i=1;i<=18;i++){
-	 runset(1, i*5, 1); //左电机全速向前转
-	 runset(2, i*5, 1); //右电机全速向前转
-	 delay(33); //1秒
-	 if(count_left< 10000 || (count_left %5000==0)){
-	 Serial.print("L: ");
-	 Serial.print(count_left-preLeft);
-	 Serial.print(";    R: ");
-	 Serial.println(count_right-preRight);
-	 preLeft = count_left;
-	 preRight = count_right;
-	 }
-	 }
-	 */
 }
-
 
 int runCommand() {
 	int i = 0;
@@ -128,6 +116,19 @@ int runCommand() {
 	 Serial.println(arg2);
 	 */
 	switch (cmd) {
+	case GET_BAUDRATE:
+		Serial.println(BAUDRATE);
+		break;
+	case READ_ENCODERS:
+		Serial.print(readEncoder(LEFT));
+		Serial.print(" ");
+		Serial.println(readEncoder(RIGHT));
+		break;
+	case RESET_ENCODERS:
+		resetEncoders();
+		resetPID();
+		Serial.println("OK");
+		break;
 	case MOTOR_SPEEDS:
 		/* Reset the auto stop timer */
 		lastMotorCommand = millis();
@@ -137,8 +138,23 @@ int runCommand() {
 			moving = 0;
 		} else
 			moving = 1;
-		leftPID.TargetTicksPerFrame = arg1; 
+		leftPID.TargetTicksPerFrame = arg1;
 		rightPID.TargetTicksPerFrame = arg2;
+                //Serial.print(arg1);
+                //Serial.print(arg2);
+		//Serial.println("OKkkkk");
+		break;
+	case UPDATE_PID:
+		while ((str = strtok_r(p, ":", &p)) != '\0') {
+			pid_args[i] = atoi(str);
+			i++;
+		}
+
+//		Kp = pid_args[0];
+//		Kd = pid_args[1];
+//		Ki = pid_args[2];
+//		Ko = pid_args[3];
+
 		Serial.println("OK");
 		break;
 

@@ -29,6 +29,7 @@ import sys, traceback
 from serial.serialutil import SerialException
 from serial import Serial
 from datetime import date , datetime
+import cmd
 
 SERVO_MAX = 180
 SERVO_MIN = 0
@@ -209,6 +210,7 @@ class Arduino:
         ntries = 1
         attempts = 0
         try:
+#             print "lognbow encoder : "+cmd
             self.port.write(cmd + '\r')
             values = self.recv_array()
             while attempts < ntries and (values == '' or values == 'Invalid Command' or values == [] or values == None):
@@ -269,12 +271,20 @@ class Arduino:
         self.mutex.release()
         return ack == 'OK'   
     
-    def update_pid(self,  left_Kp, left_Kd, left_Ki, left_Ko, right_Kp, right_Kd, right_Ki, right_Ko):
+    def update_pid(self,  Kp, Kd, Ki, Ko):
         ''' Set the PID parameters on the Arduino
         '''
         print "Updating PID parameters"
-        cmd = 'u ' + str(left_Kp) + ':' + str(left_Kd) + ':' + str(left_Ki) + ':' + str(left_Ko) + ':' + str(right_Kp) + ':' + str(right_Kd) + ':' + str(right_Ki) + ':' + str(right_Ko)
+        cmd = 'u ' + str(Kp) + ':' + str(Kd) + ':' + str(Ki) + ':' + str(Ko) 
         return self.execute_ack(cmd)  
+ 
+ 
+#     def update_pid(self,  left_Kp, left_Kd, left_Ki, left_Ko, right_Kp, right_Kd, right_Ki, right_Ko):
+#         ''' Set the PID parameters on the Arduino
+#         '''
+#         print "Updating PID parameters"
+#         cmd = 'u ' + str(left_Kp) + ':' + str(left_Kd) + ':' + str(left_Ki) + ':' + str(left_Ko) + ':' + str(right_Kp) + ':' + str(right_Kd) + ':' + str(right_Ki) + ':' + str(right_Ko)
+#         return self.execute_ack(cmd)  
 	#return self.execute_ack('u %d %d %d %d %d %d %d %d' %(left_Kp, left_Kd,left_Ki,left_Ko,right_Kp,right_Kd,right_Ki,right_Ko))
                    
 

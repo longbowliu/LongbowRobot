@@ -22,30 +22,12 @@ void initEncoders() {
 }
 
 void leftEncoderEvent() {
-  // if ((millis() - time1) > 5){
     left_enc_pos++;
-    /*
-    if(left_enc_pos % 50 ==0){
-      Serial.print("left_enc_pos :");
-      Serial.println(left_enc_pos) ;
-    }
-    */
-   //time1 = millis();
-  //}
  
 }
 
 void rightEncoderEvent() {
-   //if ((millis() - time2) > 5){
       right_enc_pos++;
-      /*
-      if(right_enc_pos % 50 ==0){
-      Serial.print("right_enc_pos :");
-      Serial.println(right_enc_pos) ;
-    }
-    */
-    //  time2 = millis();
-  //}
   
 }
 
