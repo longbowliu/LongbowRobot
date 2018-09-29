@@ -99,10 +99,12 @@ void doPID(SetPointInfo * p) {
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 	input = p->Encoder - p->PrevEnc;
 	Perror = p->TargetTicksPerFrame - input;
+/*
 	Serial.print("Perror_L:");
 	Serial.print(Perror);
 	Serial.print(" input_L:");
 	Serial.print(input);
+*/
 
 	if(p->TargetTicksPerFrame <0 ){
 		Perror = p->TargetTicksPerFrame + input;
@@ -112,14 +114,14 @@ void doPID(SetPointInfo * p) {
 	output += p->output;
 	p->ITerm += Ki * Perror;
 	
-
+/*
         Serial.print(" Kd:");
 	Serial.print(Kd * (input - p->PrevInput));
 	Serial.print(" p->ITerm:");
 	Serial.print(p->ITerm);
 	Serial.print(" output_L:");
 	Serial.println(output);
-
+*/
         p->output = output;
 	p->PrevInput = input;
 

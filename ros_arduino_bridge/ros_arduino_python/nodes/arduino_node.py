@@ -40,7 +40,7 @@ class ArduinoROS():
         rospy.on_shutdown(self.shutdown)
 
         self.port = rospy.get_param("~port", "/dev/ttyUSB0")
-        self.baud = int(rospy.get_param("~baud", 57600))
+        self.baud = int(rospy.get_param("~baud", 19200))
         self.timeout = rospy.get_param("~timeout", 0.5)
         self.base_frame = rospy.get_param("~base_frame", 'base_link')
 

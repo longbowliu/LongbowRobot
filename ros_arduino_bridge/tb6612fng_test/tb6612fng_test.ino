@@ -16,7 +16,7 @@ volatile long count_left = 0; //使用volatile lon类型是为了外部中断脉
 int preLeft = 0;
 int preRight = 0;
 
-#define BAUDRATE     57600
+#define BAUDRATE     19200
 #define MAX_PWM        255
 
 int arg = 0;
@@ -28,7 +28,7 @@ char argv2[32];
 
 long arg1;
 long arg2;
-#define AUTO_STOP_INTERVAL 8000
+#define AUTO_STOP_INTERVAL 2000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 void setup() {
@@ -36,7 +36,7 @@ void setup() {
 
 	initEncoders();
 
-	Serial.begin(57600);
+	Serial.begin(19200);
 }
 
 void loop() {
@@ -139,7 +139,7 @@ int runCommand() {
 			moving = 1;
 		leftPID.TargetTicksPerFrame = arg1; 
 		rightPID.TargetTicksPerFrame = arg2;
-		//Serial.println("OK");
+		Serial.println("OK");
 		break;
 
 	default:
