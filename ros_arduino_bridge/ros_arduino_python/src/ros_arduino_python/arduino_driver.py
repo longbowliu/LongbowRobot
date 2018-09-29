@@ -29,7 +29,6 @@ import sys, traceback
 from serial.serialutil import SerialException
 from serial import Serial
 from datetime import date , datetime
-import cmd
 
 SERVO_MAX = 180
 SERVO_MIN = 0

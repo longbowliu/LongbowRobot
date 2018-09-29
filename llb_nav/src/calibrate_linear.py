@@ -12,12 +12,12 @@ class CalibrateLinear():
         rospy.on_shutdown(self.shutdown)
 
         # How fast will we check the odometry values?
-        self.rate = 0.2
+        self.rate = 10
         r = rospy.Rate(self.rate)
 
         # Set the distance to travel
         self.test_distance = 1.0  # meters
-        self.speed = 1  # meters per second
+        self.speed = 0.8  # meters per second  // 0.2 - 0.7 ; 1.5;
         self.tolerance = 0.05  # meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True

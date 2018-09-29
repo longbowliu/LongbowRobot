@@ -36,7 +36,7 @@ int PID_INTERVAL = 1000 / PID_RATE;
 /* Track the next time we make a PID calculation */
 unsigned long nextPID = PID_INTERVAL;
 
-#define AUTO_STOP_INTERVAL 9000
+#define AUTO_STOP_INTERVAL 2000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 void setup() {
@@ -140,9 +140,7 @@ int runCommand() {
 			moving = 1;
 		leftPID.TargetTicksPerFrame = arg1;
 		rightPID.TargetTicksPerFrame = arg2;
-                //Serial.print(arg1);
-                //Serial.print(arg2);
-		//Serial.println("OKkkkk");
+		Serial.println("OK");
 		break;
 	case UPDATE_PID:
 		while ((str = strtok_r(p, ":", &p)) != '\0') {
