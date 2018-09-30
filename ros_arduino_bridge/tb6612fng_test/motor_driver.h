@@ -3,6 +3,7 @@
    ***********************************************************************/
 
   void initMotorController();
+  void stop();
   void setMotorSpeed(int i, int spd);
   void setMotorSpeeds(int leftSpeed, int rightSpeed);
   #ifdef L298N_DUAL_HBRIDGE

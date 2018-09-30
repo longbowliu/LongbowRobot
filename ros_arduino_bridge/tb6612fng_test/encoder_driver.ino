@@ -22,12 +22,21 @@ void initEncoders() {
 }
 
 void leftEncoderEvent() {
-    left_enc_pos++;
+	if(leftPID.TargetTicksPerFrame >0 ){
+		left_enc_pos++;
+	}else{
+		left_enc_pos--;
+	}
  
 }
 
 void rightEncoderEvent() {
-      right_enc_pos++;
+	if(rightPID.TargetTicksPerFrame >0 ){
+			right_enc_pos++;
+		}else{
+			right_enc_pos--;
+		}
+
   
 }
 

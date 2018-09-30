@@ -1,1 +1,5 @@
 齐格勒—尼克尔斯经验法
+
+1,need return OK from Arduino ;
+2,PID parameters set in Arduino side , it will lose precision if from xml(?)
+ 

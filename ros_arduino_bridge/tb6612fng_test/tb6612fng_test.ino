@@ -133,7 +133,7 @@ int runCommand() {
 		/* Reset the auto stop timer */
 		lastMotorCommand = millis();
 		if (arg1 == 0 && arg2 == 0) {
-			setMotorSpeeds(0, 0);
+			stop();
 			resetPID();
 			moving = 0;
 		} else

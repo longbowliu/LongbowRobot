@@ -88,11 +88,11 @@ double Ko = 1;
 
 /* PID routine to compute the next motor commands */
 void doPID(SetPointInfo * p) {
-        if(p->TargetTicksPerFrame>1800){
-          Kp = 0.001;
-          Kd = 0.003;
-          Ki = 0.000001;
-        }
+	if (p->TargetTicksPerFrame > 1800) {
+		Kp = 0.001;
+		Kd = 0.003;
+		Ki = 0.000001;
+	}
 	long Perror;
 	double output;
 	int input;
@@ -104,28 +104,30 @@ void doPID(SetPointInfo * p) {
 	Serial.print(Perror);
 	Serial.print(" input_L:");
 	Serial.print(input);
-*/
-
-	if(p->TargetTicksPerFrame <0 ){
-		Perror = p->TargetTicksPerFrame + input;
-	}
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
 	output += p->output;
 	p->ITerm += Ki * Perror;
-	
-/*
-        Serial.print(" Kd:");
+	Serial.print(" Kd:");
 	Serial.print(Kd * (input - p->PrevInput));
 	Serial.print(" p->ITerm:");
 	Serial.print(p->ITerm);
 	Serial.print(" output_L:");
 	Serial.println(output);
 */
-        p->output = output;
+
+	//if(p->TargetTicksPerFrame <0 ){
+	//	Perror = p->TargetTicksPerFrame + input;
+	//}
+
+	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+	p->PrevEnc = p->Encoder;
+	output += p->output;
+	p->ITerm += Ki * Perror;
+
+	p->output = output;
 	p->PrevInput = input;
 
-       
 }
 
 /* Read the encoder values and call the PID routine */
@@ -162,7 +164,8 @@ void updatePID() {
         */
 	/* Set the motor speeds accordingly */
 	//setMotorSpeeds(leftPID.output, rightPID.output);
-        setMotorSpeeds((int)(leftPID.output+0.5), (int)(rightPID.output+0.5));
+
+    setMotorSpeeds((int)(leftPID.output+0.5), (int)(rightPID.output+0.5));
 //        delay(33);
 }
 

@@ -115,6 +115,11 @@ void setMotorSpeeds(int leftSpeed, int rightSpeed) {
 	setMotorSpeed(LEFT, leftSpeed);
 	setMotorSpeed(RIGHT, rightSpeed);
 }
+
+void stop(){
+  digitalWrite(STBY, LOW);
+}
+
 #else
 #error A motor driver must be selected!
 #endif
