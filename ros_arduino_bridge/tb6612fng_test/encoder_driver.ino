@@ -13,6 +13,8 @@
 
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
+
+
 //unsigned long time1 = 0, time2 = 0; //左1，右2 轮 时间标记
 void initEncoders() {
   // attachInterrupt used pin 2, 3;
@@ -22,16 +24,16 @@ void initEncoders() {
 }
 
 void leftEncoderEvent() {
-	if(leftPID.TargetTicksPerFrame >0 ){
+	if(leftPID.TargetTicksPerFrame >0 || lEFT_LAST_DERECTION ){
 		left_enc_pos++;
-	}else{
+	}else {
 		left_enc_pos--;
 	}
  
 }
 
 void rightEncoderEvent() {
-	if(rightPID.TargetTicksPerFrame >0 ){
+	if(rightPID.TargetTicksPerFrame > 0 || RIGHT_LAST_DERECTION){
 			right_enc_pos++;
 		}else{
 			right_enc_pos--;

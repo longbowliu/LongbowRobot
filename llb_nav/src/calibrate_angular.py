@@ -23,8 +23,8 @@ class CalibrateAngular():
         # The test angle is 360 degrees
         self.test_angle = 0.2*pi
 
-        self.speed = 0.2 # radians per second
-        self.tolerance = 0.05 # degrees converted to radians
+        self.speed = 2 # radians per second
+        self.tolerance = 0.2 # degrees converted to radians
         self.odom_angular_scale_correction = 1
         self.start_test = True
         

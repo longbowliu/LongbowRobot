@@ -10,8 +10,17 @@
   void rightEncoderEvent();
 #endif
 
+
 long readEncoder(int i);
 void resetEncoder(int i);
 void resetEncoders();
+
+
+unsigned char  lEFT_LAST_DERECTION  = 1;
+unsigned char  RIGHT_LAST_DERECTION  = 1;
+
+
+
+
 
 
