@@ -36,7 +36,7 @@ int PID_INTERVAL = 1000 / PID_RATE;
 /* Track the next time we make a PID calculation */
 unsigned long nextPID = PID_INTERVAL;
 
-#define AUTO_STOP_INTERVAL 2000
+#define AUTO_STOP_INTERVAL 6000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 void setup() {

@@ -141,7 +141,8 @@ class Arduino:
         '''
         try:
             temp_str = self.recv(self.timeout * self.N_ANALOG_PORTS)
-	    print "recv_array : "+temp_str
+#             if temp_str != '0 0' :
+#                 print "recv_array : "+temp_str
             values = temp_str.split() 
 	                         
             if temp_str.find('|'):                
@@ -249,10 +250,12 @@ class Arduino:
         
         try:
             self.port.write(cmd + '\r')
-            print "send "+cmd
+            if cmd != 'm 0 0' :
+                print "send "+cmd
 #             print datetime.now()
             ack = self.recv(self.timeout)
-            print "recv : " +ack
+            if ack != 'OK' :
+                print "recv : " +ack
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
     A base controller class for the Arduino microcontroller
@@ -32,74 +31,66 @@ from tf.broadcaster import TransformBroadcaster
  
 """ Class to receive Twist commands and publish Odometry data """
 class BaseController:
-    def __init__(self, arduino, base_frame):
+    def __init__(self, arduino, base_frame, name="base_controllers"):
         self.arduino = arduino
+        self.name = name
         self.base_frame = base_frame
         self.rate = float(rospy.get_param("~base_controller_rate", 10))
         self.timeout = rospy.get_param("~base_controller_timeout", 1.0)
         self.stopped = False
-
+                 
         pid_params = dict()
         pid_params['wheel_diameter'] = rospy.get_param("~wheel_diameter", "") 
         pid_params['wheel_track'] = rospy.get_param("~wheel_track", "")
         pid_params['encoder_resolution'] = rospy.get_param("~encoder_resolution", "") 
         pid_params['gear_reduction'] = rospy.get_param("~gear_reduction", 1.0)
-
-        # modify by william 
-        pid_params['Kp'] = rospy.get_param("~left_Kp", 0.006)
-        pid_params['Kd'] = rospy.get_param("~left_Kd", 0.006)
-        pid_params['Ki'] = rospy.get_param("~left_Ki", 0.0001)
-        pid_params['Ko'] = rospy.get_param("~left_Ko", 1)
-#         pid_params['right_Kp'] = rospy.get_param("~right_Kp", 0.006)
-#         pid_params['right_Kd'] = rospy.get_param("~right_Kd", 0.006)
-#         pid_params['right_Ki'] = rospy.get_param("~right_Ki", 0.00001)
-#         pid_params['right_Ko'] = rospy.get_param("~right_Ko", 1)
-
+        pid_params['Kp'] = rospy.get_param("~Kp", 20)
+        pid_params['Kd'] = rospy.get_param("~Kd", 12)
+        pid_params['Ki'] = rospy.get_param("~Ki", 0)
+        pid_params['Ko'] = rospy.get_param("~Ko", 50)
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
-
+        self.max_vel_theta = rospy.get_param("~max_vel_theta",0.015)
+        self.min_vel_theta = rospy.get_param("~min_vel_theta",-0.015)
         # Set up PID parameters and check for missing values
         self.setup_pid(pid_params)
-
+            
         # How many encoder ticks are there per meter?
-        self.ticks_per_meter = self.encoder_resolution * self.gear_reduction / (self.wheel_diameter * pi)
-        # print 'self.ticks_per_meter = ', self.ticks_per_meter
-
+        self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
+        
         # What is the maximum acceleration we will tolerate when changing wheel speeds?
         self.max_accel = self.accel_limit * self.ticks_per_meter / self.rate
-
+                
         # Track how often we get a bad encoder count (if any)
         self.bad_encoder_count = 0
-
+                        
         now = rospy.Time.now()    
-        self.then = now  # time for determining dx/dy
+        self.then = now # time for determining dx/dy
         self.t_delta = rospy.Duration(1.0 / self.rate)
         self.t_next = now + self.t_delta
 
-        # internal data        
-        self.enc_left = None  # encoder readings
+        # Internal data        
+        self.enc_left = None            # encoder readings
         self.enc_right = None
-        self.x = 0  # position in xy plane
+        self.x = 0                      # position in xy plane
         self.y = 0
-        self.th = 0  # rotation in radians
+        self.th = 0                     # rotation in radians
         self.v_left = 0
         self.v_right = 0
-        self.v_des_left = 0  # cmd_vel setpoint
+        self.v_des_left = 0             # cmd_vel setpoint
         self.v_des_right = 0
         self.last_cmd_vel = now
-        self.last_R = 0
-        self.last_L = 0
 
-        # subscriptions
+        # Subscriptions
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCallback)
-
+        
         # Clear any old odometry info
         self.arduino.reset_encoders()
-
+        
         # Set up the odometry broadcaster
-        self.odomPub = rospy.Publisher('odom', Odometry)
+        self.odomPub = rospy.Publisher('odom', Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
-
+        
         rospy.loginfo("Started base controller for a base of " + str(self.wheel_track) + "m wide with " + str(self.encoder_resolution) + " ticks per rev")
         rospy.loginfo("Publishing odometry data at: " + str(self.rate) + " Hz using " + str(self.base_frame) + " as base frame")
         
@@ -110,33 +101,20 @@ class BaseController:
             if pid_params[param] == "":
                 print("*** PID Parameter " + param + " is missing. ***")
                 missing_params = True
-
+        
         if missing_params:
             os._exit(1)
-
+                
         self.wheel_diameter = pid_params['wheel_diameter']
         self.wheel_track = pid_params['wheel_track']
         self.encoder_resolution = pid_params['encoder_resolution']
         self.gear_reduction = pid_params['gear_reduction']
-
+        
         self.Kp = pid_params['Kp']
         self.Kd = pid_params['Kd']
         self.Ki = pid_params['Ki']
         self.Ko = pid_params['Ko']
-
-        # self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
-
-        # modify by william
-#         self.left_Kp = pid_params['left_Kp']
-#         self.left_Kd = pid_params['left_Kd']
-#         self.left_Ki = pid_params['left_Ki']
-#         self.left_Ko = pid_params['left_Ko']
-# 
-#         self.right_Kp = pid_params['right_Kp']
-#         self.right_Kd = pid_params['right_Kd']
-#         self.right_Ki = pid_params['right_Ki']
-#         self.right_Ko = pid_params['right_Ko']
-#         self.arduino.update_pid(self.left_Kp, self.left_Kd, self.left_Ki, self.left_Ko, self.right_Kp, self.right_Kd, self.right_Ki, self.right_Ko)
+        
         self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
 
     def poll(self):
@@ -161,15 +139,9 @@ class BaseController:
             else:
                 dright = (right_enc - self.enc_right) / self.ticks_per_meter
                 dleft = (left_enc - self.enc_left) / self.ticks_per_meter
-            temp_R = right_enc-self.last_R  
-            temp_L = left_enc-self.last_L
-#             print "right_dif : " + str(temp_R)+"   left_dif : " + str(temp_L)
-            self.last_R = right_enc
-            self.last_L = left_enc
 
             self.enc_right = right_enc
             self.enc_left = left_enc
-           
             
             dxy_ave = (dright + dleft) / 2.0
             dth = (dright - dleft) / self.wheel_track
@@ -193,7 +165,7 @@ class BaseController:
     
             # Create the odometry transform frame broadcaster.
             self.odomBroadcaster.sendTransform(
-                (self.x, self.y, 0),
+                (self.x, self.y, 0), 
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
                 rospy.Time.now(),
                 self.base_frame,
@@ -214,38 +186,31 @@ class BaseController:
 
             self.odomPub.publish(odom)
             
-            if now > (self.last_cmd_vel + rospy.Duration(self.timeout)):
-                self.v_des_left = 0
-                self.v_des_right = 0
-                
-#             print "longbow : v_left  " +  str(self.v_left)
-#             print "longbow : v_des_left  " +  str(self.v_des_left)
-            # print "longbow : max_accel  " +  str(self.max_accel)
-            if self.v_left < self.v_des_left:
-                self.v_left += self.max_accel
-                if self.v_left > self.v_des_left:
-                    self.v_left = self.v_des_left
-            else:
-                self.v_left -= self.max_accel
-                if self.v_left < self.v_des_left:
-                    self.v_left = self.v_des_left
+#             if now > (self.last_cmd_vel + rospy.Duration(self.timeout)):
+#                 self.v_des_left = 0
+#                 self.v_des_right = 0
+#                 
+#             if self.v_left < self.v_des_left:
+#                 self.v_left += self.max_accel
+#                 if self.v_left > self.v_des_left:
+#                     self.v_left = self.v_des_left
+#             else:
+#                 self.v_left -= self.max_accel
+#                 if self.v_left < self.v_des_left:
+#                     self.v_left = self.v_des_left
+#              
+#             if self.v_right < self.v_des_right:
+#                 self.v_right += self.max_accel
+#                 if self.v_right > self.v_des_right:
+#                     self.v_right = self.v_des_right
+#             else:
+#                 self.v_right -= self.max_accel
+#                 if self.v_right < self.v_des_right:
+#                     self.v_right = self.v_des_right
                     
-#             print "longbow1 : v_right  " +  str(self.v_right)
-#             print "longbow1 : v_des_right  " +  str(self.v_des_right)
-            if self.v_right < self.v_des_right:
-                self.v_right += self.max_accel
-                if self.v_right > self.v_des_right:
-                    self.v_right = self.v_des_right
-            else:
-                self.v_right -= self.max_accel
-                if self.v_right < self.v_des_right:
-                    self.v_right = self.v_des_right
-            
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
-                self.arduino.drive(self.v_left, self.v_right)
-#                 print " v_right: "+str(self.v_right)
-#                 print "v_left : "+str(self.v_left)
+                self.arduino.drive(self.v_des_left, self.v_des_right)
                 
             self.t_next = now + self.t_delta
             
@@ -257,36 +222,58 @@ class BaseController:
         # Handle velocity-based movement requests
         self.last_cmd_vel = rospy.Time.now()
         
-        x = req.linear.x  # m/s
-        th = req.angular.z  # rad/s
-#         print 'llb th = ',th
-        if x == 0:  # Turn round
+        x = req.linear.x         # m/s
+        th = req.angular.z       # rad/s
+        
+        print 'th=',th ,' x=', x , ' max_vel_theta =',self.max_vel_theta
+        if x == 0:
+#             # Turn in place
 #             print 1
-            # Turn in place
-            right = th * self.wheel_track * self.gear_reduction / 2.0
+            right = th * self.wheel_track  * self.gear_reduction / 2.0
+            if abs(th) > abs(self.max_vel_theta):
+                if th > 0 :
+                    right = self.max_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
+                else:
+                    right = self.min_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
             left = -right
-#             print 'x = ',x , ' th = ', th, ' left = ',left,' right = ',right
-        elif th == 0:  # Go straight
+        elif abs(th) <= abs(0.05):
 #             print 2
             # Pure forward/backward motion
             left = right = x
-#             print 'x = ',x , ' th = ', th, ' left = ',left,' right = ',right
         else:
+            
 #             print 3
-            # Rotation about a point in space
-            left = x - th * self.wheel_track * self.gear_reduction / 2.0
-            right = x + th * self.wheel_track * self.gear_reduction / 2.0
-       # print " left = "+str(left)
-        # print "self.ticks_per_meter = "+str(self.ticks_per_meter)
-        # print "self.arduino.PID_RATE = "+str(self.arduino.PID_RATE)
-        # print " right = "+str(right)
-#         print "################&&&&&&&&&&&&", self.ticks_per_meter
-#         print "################&&&&&&&&&&&&",left * self.ticks_per_meter / self.arduino.PID_RATE
+            temp = th
+            # Rotation about a point in space  !!!!!! turn around and go at the same time , works very bad , need carefull calculate !!!!!
+#             if abs(th)>1 :
+#                 if temp > 0:
+#                     temp = 1
+#                 else :
+#                     temp = -1
+            left =  x - temp * self.wheel_track / 2.0
+            right =  x + temp * self.wheel_track / 2.0
+            '''
+            print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
+            if abs(th) > abs(self.max_vel_theta):
+                if th > 0 :
+                    left =  x - self.max_vel_theta * self.wheel_track / 2.0
+                    right =  x + self.max_vel_theta * self.wheel_track  / 2.0
+                else:
+                    left =  x - self.min_vel_theta * self.wheel_track / 2.0
+                    right =  x + self.min_vel_theta * self.wheel_track  / 2.0
+            
+            
+            right = th * self.wheel_track  * self.gear_reduction / 2.0
+            if abs(th) > abs(self.max_vel_theta):
+                if th > 0 :
+                    right = self.max_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
+                else:
+                    right = self.min_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
+            left = -right
+            '''
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
-#         if self.v_des_left > 0 or self.v_des_right > 0 : 
-#              print " self.v_des_left  = "+str(self.v_des_left )
-#              print " self.v_des_right  = "+str(self.v_des_right ) 
+        print 'left = ', left ,self.v_des_left, ' right=', right , self.v_des_right
         
 
         

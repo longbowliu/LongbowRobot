@@ -25,7 +25,7 @@ class CalibrateAngular():
 
         self.speed = 0.05 # radians per second
         self.tolerance = 0.2 # degrees converted to radians
-        self.odom_angular_scale_correction = 1
+        self.odom_angular_scale_correction = 1.05
         self.start_test = True
         
         # Publisher to control the robot's speed

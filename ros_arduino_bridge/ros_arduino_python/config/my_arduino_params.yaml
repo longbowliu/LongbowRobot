@@ -17,8 +17,8 @@ base_controller_rate: 10
 base_frame: base_link
 
 # === Robot drivetrain parameters
-wheel_diameter: 0.06
-wheel_track: 0.20
+wheel_diameter: 0.064
+wheel_track: 0.195
 encoder_resolution: 330 # from Pololu for 131:1 motors
 gear_reduction: 30
 #motors_reversed: True
@@ -28,7 +28,7 @@ Kp: 0.006
 Kd: 0.006
 Ki: 0.00001
 Ko: 1
-accel_limit: 1.0
+accel_limit: 0.1
 
 #left_Kp: 0.006
 #left_Kd: 0.006
