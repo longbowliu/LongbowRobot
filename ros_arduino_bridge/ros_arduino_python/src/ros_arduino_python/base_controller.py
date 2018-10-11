@@ -28,6 +28,7 @@ from math import sin, cos, pi
 from geometry_msgs.msg import Quaternion, Twist, Pose
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
+from datetime import date, datetime
  
 """ Class to receive Twist commands and publish Odometry data """
 class BaseController:
@@ -225,33 +226,37 @@ class BaseController:
         x = req.linear.x         # m/s
         th = req.angular.z       # rad/s
         
-        print 'th=',th ,' x=', x , ' max_vel_theta =',self.max_vel_theta
+        print 'th=',th ,' x=', x 
         if x == 0:
 #             # Turn in place
 #             print 1
+            right = sin(th) * self.wheel_track  / 2.0
+            '''
             right = th * self.wheel_track  * self.gear_reduction / 2.0
             if abs(th) > abs(self.max_vel_theta):
                 if th > 0 :
                     right = self.max_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
                 else:
                     right = self.min_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
+            '''
             left = -right
-        elif abs(th) <= abs(0.05):
+        elif th== 0:
 #             print 2
             # Pure forward/backward motion
             left = right = x
         else:
             
 #             print 3
-            temp = th
+#             temp = th
             # Rotation about a point in space  !!!!!! turn around and go at the same time , works very bad , need carefull calculate !!!!!
 #             if abs(th)>1 :
 #                 if temp > 0:
 #                     temp = 1
 #                 else :
 #                     temp = -1
-            left =  x - temp * self.wheel_track / 2.0
-            right =  x + temp * self.wheel_track / 2.0
+            left =  x - sin(th) * self.wheel_track / 2.0
+            right =  x + sin(th) * self.wheel_track / 2.0
+            
             '''
             print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
             if abs(th) > abs(self.max_vel_theta):
