@@ -250,8 +250,8 @@ class Arduino:
         
         try:
             self.port.write(cmd + '\r')
-            if cmd != 'm 0 0' :
-                print "send "+cmd
+#             if cmd != 'm 0 0' :
+#                 print "send "+cmd
 #             print datetime.now()
             ack = self.recv(self.timeout)
             if ack != 'OK' :
