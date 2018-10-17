@@ -7,9 +7,9 @@
   <xacro:property name="body_size" value=".2 .12 .1" />
   <xacro:property name="body_pos" value="0 0 0.05" />
   <xacro:property name="wheel_radius" value="0.032" />
-  <xacro:property name="wheel_length" value="0.02" />
-  <xacro:property name="wheel1_pos" value="0.05 0.065 0.0" />
-  <xacro:property name="wheel2_pos" value="0.05 -0.065 0.0" />
+  <xacro:property name="wheel_length" value="0.027" />
+  <xacro:property name="wheel1_pos" value="0.05 0.0975 0.0" />
+  <xacro:property name="wheel2_pos" value="0.05 -0.0975 0.0" />
  
   <xacro:macro name="wheel" params="wheelname position">
     <link name="${wheelname}">
@@ -57,7 +57,7 @@
 	<joint name="camera_link_to_base_link" type="fixed">
 		<parent link="base_link" />
 		<child link="camera_link" />
-		<origin rpy="0 0 0" xyz="0.13 0.0 0.13" />
+		<origin rpy="0 0 0" xyz="0.02 0.0 0.206" />
 	</joint>
 
 	<link name="camera_depth_frame">

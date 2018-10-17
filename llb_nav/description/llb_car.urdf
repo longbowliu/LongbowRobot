@@ -4,17 +4,6 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="llb_car" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-  <link name="base_link">
-    <visual>
-      <geometry>
-        <box size=".2 .12 .1"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.05"/>
-      <material name="white">
-        <color rgba="1 1 1 1"/>
-      </material>
-    </visual>
-  </link>
   <link name="wheel1">
     <visual>
       <geometry>
@@ -29,11 +18,11 @@
     <axis xyz="0 0 1" />
     <parent link="base_link"/>
     <child link="wheel1"/>
-    <origin rpy="1.57 0 0" xyz="0.05 0.065 0.0"/>
+    <origin rpy="1.57 0 0" xyz="0.05 0.0975 0.0"/>
     <limit effort="100" velocity="100" lower="-1.5707963" upper="1.5707963" />
 	<joint_properties damping="0.0" friction="0.0" />
-  </joint>
-  <link name="wheel2">
+</joint>
+ <link name="wheel2">
     <visual>
       <geometry>
         <cylinder length="0.02" radius="0.032"/>
@@ -47,11 +36,21 @@
   	<axis xyz="0 0 1" />
     <parent link="base_link"/>
     <child link="wheel2"/>
-     <origin rpy="1.57 0 0" xyz="0.05 -0.065 0.0"/>
+     <origin rpy="1.57 0 0" xyz="0.05 -0.0975 0.0"/>
     <limit effort="100" velocity="100" lower="-1.5707963" upper="1.5707963" />
 	<joint_properties damping="0.0" friction="0.0" />
-  </joint>
-  
+</joint>
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size=".2 .12 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
   <link name="camera_link">
     <visual>
       <geometry>
@@ -65,7 +64,7 @@
   <joint name="camera_link_to_base_link" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
-    <origin rpy="0 0 0" xyz="0.13 0.0 0.13"/>
+    <origin rpy="0 0 0" xyz="0.02 0.0 0.206"/>
   </joint>
   <link name="camera_depth_frame">
     <visual>
