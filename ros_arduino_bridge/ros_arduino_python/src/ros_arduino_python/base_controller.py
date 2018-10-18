@@ -51,8 +51,10 @@ class BaseController:
         pid_params['Ko'] = rospy.get_param("~Ko", 50)
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
-        self.max_vel_theta = rospy.get_param("~max_vel_theta",0.015)
-        self.min_vel_theta = rospy.get_param("~min_vel_theta",-0.015)
+        self.max_vel_theta = rospy.get_param("~max_vel_theta",0.3)
+        self.min_vel_theta = rospy.get_param("~min_vel_theta",-0.3)
+        self.max_in_place_vel_theta = rospy.get_param("~max_in_place_vel_theta",0.3)
+        self.min_in_place_vel_theta = rospy.get_param("~min_in_place_vel_theta",-0.3)
         # Set up PID parameters and check for missing values
         self.setup_pid(pid_params)
             
@@ -257,25 +259,17 @@ class BaseController:
             left =  x - sin(th) * self.wheel_track / 2.0
             right =  x + sin(th) * self.wheel_track / 2.0
             
-            '''
-            print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
+            
             if abs(th) > abs(self.max_vel_theta):
+                print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
                 if th > 0 :
-                    left =  x - self.max_vel_theta * self.wheel_track / 2.0
-                    right =  x + self.max_vel_theta * self.wheel_track  / 2.0
+                    left =  x - sin(self.max_vel_theta) * self.wheel_track / 2.0
+                    right =  x + sin(self.max_vel_theta) * self.wheel_track  / 2.0
                 else:
-                    left =  x - self.min_vel_theta * self.wheel_track / 2.0
-                    right =  x + self.min_vel_theta * self.wheel_track  / 2.0
+                    left =  x - sin(self.min_vel_theta) * self.wheel_track / 2.0
+                    right =  x + sin(self.min_vel_theta) * self.wheel_track  / 2.0
             
             
-            right = th * self.wheel_track  * self.gear_reduction / 2.0
-            if abs(th) > abs(self.max_vel_theta):
-                if th > 0 :
-                    right = self.max_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
-                else:
-                    right = self.min_vel_theta * self.wheel_track  * self.gear_reduction / 2.0
-            left = -right
-            '''
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
 #         print 'left = ', left ,self.v_des_left, ' right=', right , self.v_des_right
