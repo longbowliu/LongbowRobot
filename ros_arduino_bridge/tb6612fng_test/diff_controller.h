@@ -107,7 +107,7 @@ void doLeftPID(SetPointInfo * p) {
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 	input = p->Encoder - p->PrevEnc;
 	Perror = p->TargetTicksPerFrame - input;
-
+/*
 	Serial.print("Perror_L:");
 	Serial.print(Perror);
 	Serial.print(" input_L:");
@@ -122,14 +122,14 @@ void doLeftPID(SetPointInfo * p) {
 	Serial.print(p->ITerm);
 	Serial.print(" output_L:");
 	Serial.println(output);
+*/
 
 
-/*
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
 	output += p->output;
 	p->ITerm += Ki * Perror;
-*/
+
 	p->output = output;
 	p->PrevInput = input;
 
@@ -147,7 +147,7 @@ void doRightPID(SetPointInfo * p) {
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 	input = p->Encoder - p->PrevEnc;
 	Perror = p->TargetTicksPerFrame - input;
-
+/*
 	Serial.print("Perror_R:");
 	Serial.print(Perror);
 	Serial.print(" input_R:");
@@ -162,14 +162,14 @@ void doRightPID(SetPointInfo * p) {
 	Serial.print(p->ITerm);
 	Serial.print(" output_R:");
 	Serial.println(output);
+*/
 
 
-/*
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
 	output += p->output;
 	p->ITerm += Ki * Perror;
-*/
+
 	p->output = output;
 	p->PrevInput = input;
 

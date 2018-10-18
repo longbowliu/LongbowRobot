@@ -189,31 +189,31 @@ class BaseController:
 
             self.odomPub.publish(odom)
             
-#             if now > (self.last_cmd_vel + rospy.Duration(self.timeout)):
-#                 self.v_des_left = 0
-#                 self.v_des_right = 0
-#                 
-#             if self.v_left < self.v_des_left:
-#                 self.v_left += self.max_accel
-#                 if self.v_left > self.v_des_left:
-#                     self.v_left = self.v_des_left
-#             else:
-#                 self.v_left -= self.max_accel
-#                 if self.v_left < self.v_des_left:
-#                     self.v_left = self.v_des_left
-#              
-#             if self.v_right < self.v_des_right:
-#                 self.v_right += self.max_accel
-#                 if self.v_right > self.v_des_right:
-#                     self.v_right = self.v_des_right
-#             else:
-#                 self.v_right -= self.max_accel
-#                 if self.v_right < self.v_des_right:
-#                     self.v_right = self.v_des_right
+            if now > (self.last_cmd_vel + rospy.Duration(self.timeout)):
+                self.v_des_left = 0
+                self.v_des_right = 0
+                 
+            if self.v_left < self.v_des_left:
+                self.v_left += self.max_accel
+                if self.v_left > self.v_des_left:
+                    self.v_left = self.v_des_left
+            else:
+                self.v_left -= self.max_accel
+                if self.v_left < self.v_des_left:
+                    self.v_left = self.v_des_left
+              
+            if self.v_right < self.v_des_right:
+                self.v_right += self.max_accel
+                if self.v_right > self.v_des_right:
+                    self.v_right = self.v_des_right
+            else:
+                self.v_right -= self.max_accel
+                if self.v_right < self.v_des_right:
+                    self.v_right = self.v_des_right
                     
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
-                self.arduino.drive(self.v_des_left, self.v_des_right)
+                self.arduino.drive(self.v_left, self.v_right)
                 
             self.t_next = now + self.t_delta
             
