@@ -27,6 +27,7 @@ typedef struct {
 	double ITerm;                    //integrated term
 
 	double output;                    // last motor setting
+
 } SetPointInfo;
 
 SetPointInfo leftPID, rightPID;
@@ -49,12 +50,14 @@ void resetPID() {
 	leftPID.PrevInput = 0;
 	leftPID.ITerm = 0;
 
+
 	rightPID.TargetTicksPerFrame = 0.0;
 	rightPID.Encoder = readEncoder(RIGHT);
 	rightPID.PrevEnc = rightPID.Encoder;
 	rightPID.output = 0;
 	rightPID.PrevInput = 0;
 	rightPID.ITerm = 0;
+
 }
 
 /* PID Parameters 
@@ -83,11 +86,16 @@ ki= 0.000001
 double Kp = 0.006;
 double Kd = 0.006;
 double Ki = 0.00001;
-//double Ki = 0;
+/*
+double Kp = 0.1;
+double Ki = 0.001;
+double Kd = 0.001;
+*/
+
 double Ko = 1;
 
 /* PID routine to compute the next motor commands */
-void doPID(SetPointInfo * p) {
+void doLeftPID(SetPointInfo * p) {
 	if (p->TargetTicksPerFrame > 1800) {
 		Kp = 0.001;
 		Kd = 0.003;
@@ -116,9 +124,46 @@ void doPID(SetPointInfo * p) {
 	Serial.println(output);
 
 
-	//if(p->TargetTicksPerFrame <0 ){
-	//	Perror = p->TargetTicksPerFrame + input;
-	//}
+/*
+	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+	p->PrevEnc = p->Encoder;
+	output += p->output;
+	p->ITerm += Ki * Perror;
+*/
+	p->output = output;
+	p->PrevInput = input;
+
+}
+
+void doRightPID(SetPointInfo * p) {
+	if (p->TargetTicksPerFrame > 1800) {
+		Kp = 0.001;
+		Kd = 0.003;
+		Ki = 0.000001;
+	}
+	long Perror;
+	double output;
+	int input;
+	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
+	input = p->Encoder - p->PrevEnc;
+	Perror = p->TargetTicksPerFrame - input;
+
+	Serial.print("Perror_R:");
+	Serial.print(Perror);
+	Serial.print(" input_R:");
+	Serial.print(input);
+	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+	p->PrevEnc = p->Encoder;
+	output += p->output;
+	p->ITerm += Ki * Perror;
+	Serial.print(" Kd:");
+	Serial.print(Kd * (input - p->PrevInput));
+	Serial.print(" p->ITerm:");
+	Serial.print(p->ITerm);
+	Serial.print(" output_R:");
+	Serial.println(output);
+
+
 /*
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
@@ -150,8 +195,8 @@ void updatePID() {
 	}
 
 	/* Compute PID update for each motor */
-	doPID(&rightPID);
-	doPID(&leftPID);
+	doRightPID(&rightPID);
+	doLeftPID(&leftPID);
 /*
         Serial.print("leftPID.output : ");
         Serial.print(leftPID.output);
