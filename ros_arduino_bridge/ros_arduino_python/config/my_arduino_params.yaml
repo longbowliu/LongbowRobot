@@ -3,7 +3,7 @@
 # For a wireless connection like XBee, the port is typically
 # /dev/ttyUSB# where # is a number such as 0, 1, 2, etc.
 
-port: /dev/ttyUSB1
+port: /dev/ttyUSB0
 baud: 19200
 timeout: 0.1
 
@@ -28,7 +28,7 @@ Kp: 0.006
 Kd: 0.006
 Ki: 0.00001
 Ko: 1
-accel_limit: 0.1
+accel_limit: 0.001
 
 #left_Kp: 0.006
 #left_Kd: 0.006

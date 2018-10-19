@@ -122,13 +122,13 @@ void doLeftPID(SetPointInfo * p) {
 	Serial.print(p->ITerm);
 	Serial.print(" output_L:");
 	Serial.println(output);
+
 */
-
-
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
 	output += p->output;
 	p->ITerm += Ki * Perror;
+
 
 	p->output = output;
 	p->PrevInput = input;
@@ -164,11 +164,11 @@ void doRightPID(SetPointInfo * p) {
 	Serial.println(output);
 */
 
-
 	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 	p->PrevEnc = p->Encoder;
 	output += p->output;
 	p->ITerm += Ki * Perror;
+
 
 	p->output = output;
 	p->PrevInput = input;

@@ -49,7 +49,7 @@ class BaseController:
         pid_params['Kd'] = rospy.get_param("~Kd", 12)
         pid_params['Ki'] = rospy.get_param("~Ki", 0)
         pid_params['Ko'] = rospy.get_param("~Ko", 50)
-        self.accel_limit = rospy.get_param('~accel_limit', 0.1)
+        self.accel_limit = rospy.get_param('~accel_limit', 0.001)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
         self.max_vel_theta = rospy.get_param("~max_vel_theta",0.3)
         self.min_vel_theta = rospy.get_param("~min_vel_theta",-0.3)
@@ -57,9 +57,10 @@ class BaseController:
         self.min_in_place_vel_theta = rospy.get_param("~min_in_place_vel_theta",-0.3)
         # Set up PID parameters and check for missing values
         self.setup_pid(pid_params)
-            
+#         print '11111111111',   self.encoder_resolution * self.gear_reduction
         # How many encoder ticks are there per meter?
         self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
+#         print 'ooooooooo',self.ticks_per_meter // 49238.56
         
         # What is the maximum acceleration we will tolerate when changing wheel speeds?
         self.max_accel = self.accel_limit * self.ticks_per_meter / self.rate
@@ -82,7 +83,11 @@ class BaseController:
         self.v_right = 0
         self.v_des_left = 0             # cmd_vel setpoint
         self.v_des_right = 0
+        self.vdl_last = 0
+        self.vdr_last =0
         self.last_cmd_vel = now
+        
+        
 
         # Subscriptions
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCallback)
@@ -192,28 +197,42 @@ class BaseController:
             if now > (self.last_cmd_vel + rospy.Duration(self.timeout)):
                 self.v_des_left = 0
                 self.v_des_right = 0
-                 
-            if self.v_left < self.v_des_left:
-                self.v_left += self.max_accel
-                if self.v_left > self.v_des_left:
-                    self.v_left = self.v_des_left
+#             self.max_accel = 49    
+#             print    self.v_left,   self.v_des_left, self.vdl_last
+            '''
+            if (self.vdl_last > 0 and self.v_des_left < 0) or ( self.vdl_last < 0 and self.v_des_left > 0 ) :
+                self.v_left = self.v_des_left
+                self.v_right = self.v_des_right
+            elif (self.vdr_last > 0 and self.v_des_right < 0) or ( self.vdr_last < 0 and self.v_des_right > 0 ) :
+                self.v_left = self.v_des_left
+                self.v_right = self.v_des_right
             else:
-                self.v_left -= self.max_accel
                 if self.v_left < self.v_des_left:
-                    self.v_left = self.v_des_left
-              
-            if self.v_right < self.v_des_right:
-                self.v_right += self.max_accel
-                if self.v_right > self.v_des_right:
-                    self.v_right = self.v_des_right
-            else:
-                self.v_right -= self.max_accel
+                    self.v_left += self.max_accel
+                    if self.v_left > self.v_des_left:
+                        self.v_left = self.v_des_left
+                else:
+                    self.v_left -= self.max_accel
+                    if self.v_left < self.v_des_left:
+                        self.v_left = self.v_des_left
+                        
+#                 print    self.v_right,   self.v_des_right, self.vdr_last
+                  
                 if self.v_right < self.v_des_right:
-                    self.v_right = self.v_des_right
+                    self.v_right += self.max_accel
+                    if self.v_right > self.v_des_right:
+                        self.v_right = self.v_des_right
+                else:
+                    self.v_right -= self.max_accel
+                    if self.v_right < self.v_des_right:
+                        self.v_right = self.v_des_right
                     
+            self.vdl_last = self.v_des_left  
+            self.vdr_last = self.v_des_right
+            '''
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
-                self.arduino.drive(self.v_left, self.v_right)
+                self.arduino.drive(self.v_des_left , self.v_des_right)
                 
             self.t_next = now + self.t_delta
             
