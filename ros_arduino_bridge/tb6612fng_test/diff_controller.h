@@ -150,7 +150,7 @@ void doLeftPID(SetPointInfo * p) {
 		p->ITerm += Ki * Perror;
 		p->output = output;
 		p->PrevInput = input;
-
+/*
 		Serial.print("****Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
@@ -161,10 +161,11 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(int(output + 0.5));
+*/
 	} else {
 		input = p->Encoder - p->PrevEnc;
 		Perror = p->TargetTicksPerFrame - input;
-
+/*
 		Serial.print("Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
@@ -179,13 +180,13 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(int(output + 0.5));
+*/
 
-		/*
 		 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 		 p->PrevEnc = p->Encoder;
 		 output += p->output;
 		 p->ITerm += Ki * Perror;
-		 */
+
 
 		p->output = output;
 		p->PrevInput = input;
@@ -203,33 +204,94 @@ void doRightPID(SetPointInfo * p) {
 	double output;
 	int input;
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
-	input = p->Encoder - p->PrevEnc;
-	Perror = p->TargetTicksPerFrame - input;
-
-	Serial.print("Perror_R:");
-	Serial.print(Perror);
-	Serial.print(" input_R:");
-	Serial.print(input);
-	output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
-	p->PrevEnc = p->Encoder;
-	output += p->output;
-	p->ITerm += Ki * Perror;
-	Serial.print(" Kd:");
-	Serial.print(Kd * (input - p->PrevInput));
-	Serial.print(" p->ITerm:");
-	Serial.print(p->ITerm);
-	Serial.print(" output_R:");
-	Serial.println(int(output + 0.5));
+	int dw = int(p->TargetTicksPerFrame) / 50;
+		boolean first = false;
+		int group = dw / 4;
+		int position = (dw) % 4;
+		int p_v = 0;
+		for (int i = 0; i < position; i++) {
+			p_v += pos_value[i];
+		}
+		int comp = 4 + group * 15 + p_v;
 	/*
+	        Serial.print(group);
+	        Serial.print("  ");
+	        Serial.println(position);
+	       */
+		if(group==0 && position==0){
+			comp = comp+5;
+		}
+	/*
+		Serial.print("p_v:");
+		Serial.print(p_v);
+		Serial.print("; goup:");
+		Serial.print(group);
+		Serial.print("; position:");
+		Serial.print(position);
+		Serial.print("; comp:");
+		Serial.print(comp);
+		Serial.print("; dw:");
+		Serial.println(dw);
+	        Serial.println(p->output < comp*0.7);
+	        */
+		if (p->output < comp*0.7) {
+			output = comp;
+			first = true;
+		} else {
+			first = false;
+		}
 
-	 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
-	 p->PrevEnc = p->Encoder;
-	 output += p->output;
-	 p->ITerm += Ki * Perror;
-	 */
+		if (first) {
 
-	p->output = output;
-	p->PrevInput = input;
+			input = p->TargetTicksPerFrame;
+			Perror = p->TargetTicksPerFrame - input;
+			//output = 10;
+			p->PrevEnc = 0;
+			p->ITerm += Ki * Perror;
+			p->output = output;
+			p->PrevInput = input;
+/*
+			Serial.print("****Perror_R:");
+			Serial.print(Perror);
+			Serial.print(" input_R:");
+			Serial.print(input);
+			Serial.print(" Kd:");
+			Serial.print(Kd * (input - p->PrevInput));
+			Serial.print(" p->ITerm:");
+			Serial.print(p->ITerm);
+			Serial.print(" output_R:");
+			Serial.println(int(output + 0.5));
+*/
+		} else {
+
+			input = p->Encoder - p->PrevEnc;
+			Perror = p->TargetTicksPerFrame - input;
+/*
+			Serial.print("Perror_R:");
+			Serial.print(Perror);
+			Serial.print(" input_R:");
+			Serial.print(input);
+			output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+			p->PrevEnc = p->Encoder;
+			output += p->output;
+			p->ITerm += Ki * Perror;
+			Serial.print(" Kd:");
+			Serial.print(Kd * (input - p->PrevInput));
+			Serial.print(" p->ITerm:");
+			Serial.print(p->ITerm);
+			Serial.print(" output_R:");
+			Serial.println(int(output + 0.5));
+*/
+
+			 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
+			 p->PrevEnc = p->Encoder;
+			 output += p->output;
+			 p->ITerm += Ki * Perror;
+
+
+			p->output = output;
+			p->PrevInput = input;
+		}
 
 }
 
