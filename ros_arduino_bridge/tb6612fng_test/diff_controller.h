@@ -95,7 +95,7 @@ double Ko = 1;
 int pos_value[4] = { 5, 3, 4, 3 };
 /* PID routine to compute the next motor commands */
 void doLeftPID(SetPointInfo * p) {
-	if (p->TargetTicksPerFrame > 1800) {
+	if (p->TargetTicksPerFrame > 1800 or p->TargetTicksPerFrame < -1800) {
 		Kp = 0.001;
 		Kd = 0.003;
 		Ki = 0.000001;
@@ -105,6 +105,9 @@ void doLeftPID(SetPointInfo * p) {
 	int input;
 	//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 	int dw = int(p->TargetTicksPerFrame) / 50;
+	if(p->TargetTicksPerFrame<0){
+		dw = int(-p->TargetTicksPerFrame) / 50;
+	}
 	boolean first = false;
 	int group = dw / 4;
 	int position = (dw) % 4;
@@ -113,15 +116,11 @@ void doLeftPID(SetPointInfo * p) {
 		p_v += pos_value[i];
 	}
 	int comp = 4 + group * 15 + p_v;
-/*
-        Serial.print(group);
-        Serial.print("  ");
-        Serial.println(position);
-       */
+
 	if(group==0 && position==0){
 		comp = comp+5;
 	}
-/*
+
 	Serial.print("p_v:");
 	Serial.print(p_v);
 	Serial.print("; goup:");
@@ -133,7 +132,7 @@ void doLeftPID(SetPointInfo * p) {
 	Serial.print("; dw:");
 	Serial.println(dw);
         Serial.println(p->output < comp*0.7);
-        */
+        
 	if (p->output < comp*0.7) {
 		output = comp;
 		first = true;
@@ -143,14 +142,19 @@ void doLeftPID(SetPointInfo * p) {
 
 	if (first) {
 
-		input = p->TargetTicksPerFrame;
-		Perror = p->TargetTicksPerFrame - input;
+		if(p->TargetTicksPerFrame<0){
+			input = -p->TargetTicksPerFrame;
+			Perror = -p->TargetTicksPerFrame - input;
+		}else{
+			input = p->TargetTicksPerFrame;
+			Perror = p->TargetTicksPerFrame - input;
+		}
 		//output = 10;
 		p->PrevEnc = 0;
 		p->ITerm += Ki * Perror;
 		p->output = output;
 		p->PrevInput = input;
-/*
+
 		Serial.print("****Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
@@ -161,17 +165,25 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(int(output + 0.5));
-*/
+
 	} else {
-		input = p->Encoder - p->PrevEnc;
-		Perror = p->TargetTicksPerFrame - input;
-/*
+
+		if(p->TargetTicksPerFrame<0){
+			input = -p->Encoder - p->PrevEnc;
+			Perror = -p->TargetTicksPerFrame - input;
+			p->PrevEnc = -p->Encoder;
+		}else{
+			input = p->Encoder - p->PrevEnc;
+			Perror = p->TargetTicksPerFrame - input;
+			p->PrevEnc = p->Encoder;
+		}
+
 		Serial.print("Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
 		Serial.print(input);
 		output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
-		p->PrevEnc = p->Encoder;
+               
 		output += p->output;
 		p->ITerm += Ki * Perror;
 		Serial.print(" Kd:");
@@ -180,13 +192,13 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(int(output + 0.5));
-*/
 
+/*
 		 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 		 p->PrevEnc = p->Encoder;
 		 output += p->output;
 		 p->ITerm += Ki * Perror;
-
+*/
 
 		p->output = output;
 		p->PrevInput = input;
@@ -281,8 +293,8 @@ void doRightPID(SetPointInfo * p) {
 			Serial.print(p->ITerm);
 			Serial.print(" output_R:");
 			Serial.println(int(output + 0.5));
-*/
 
+*/
 			 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 			 p->PrevEnc = p->Encoder;
 			 output += p->output;
@@ -317,6 +329,10 @@ void updatePID() {
 	/* Compute PID update for each motor */
 	doRightPID(&rightPID);
 	doLeftPID(&leftPID);
+        int left_speed = int(leftPID.output+0.5);
+	if(leftPID.TargetTicksPerFrame<0){
+		left_speed = int(-leftPID.output-0.5);
+	}
 	/*
 	 Serial.print("leftPID.output : ");
 	 Serial.print(leftPID.output);
@@ -329,7 +345,7 @@ void updatePID() {
 	 */
 	/* Set the motor speeds accordingly */
 	//setMotorSpeeds(leftPID.output, rightPID.output);
-	setMotorSpeeds((int) (leftPID.output + 0.5), (int) (rightPID.output + 0.5));
+	setMotorSpeeds(left_speed , (int) (rightPID.output + 0.5));
 //        delay(33);
 }
 
