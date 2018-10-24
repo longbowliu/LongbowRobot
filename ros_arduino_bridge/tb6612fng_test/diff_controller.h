@@ -131,7 +131,7 @@ void doLeftPID(SetPointInfo * p) {
 	Serial.print(comp);
 	Serial.print("; dw:");
 	Serial.println(dw);
-    Serial.println(p->output < comp*0.7);
+        Serial.println(p->output < comp*0.7);
 */
 	if (p->output < comp*0.7) {
 		output = comp;
@@ -143,18 +143,20 @@ void doLeftPID(SetPointInfo * p) {
 	if (first) {
 
 		if(p->TargetTicksPerFrame<0){
-			input = -p->TargetTicksPerFrame;
-			Perror = -p->TargetTicksPerFrame - input;
+			input = -p->Encoder - p->PrevEnc;
+			Perror = -p->TargetTicksPerFrame ;
+			p->PrevEnc = -p->Encoder;
 		}else{
-			input = p->TargetTicksPerFrame;
-			Perror = p->TargetTicksPerFrame - input;
+			input = p->Encoder - p->PrevEnc;
+			Perror = p->TargetTicksPerFrame ;
+			p->PrevEnc = p->Encoder;
 		}
 		//output = 10;
-		p->PrevEnc = 0;
+		//p->PrevEnc = 0;
 		p->ITerm += Ki * Perror;
 		p->output = output;
-		p->PrevInput = input;
-/*
+		p->PrevInput = 0;
+
 		Serial.print("****Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
@@ -164,8 +166,8 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(" p->ITerm:");
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
-		Serial.println(int(output + 0.5));
-*/
+		Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
+
 	} else {
 
 		if(p->TargetTicksPerFrame<0){
@@ -177,7 +179,7 @@ void doLeftPID(SetPointInfo * p) {
 			Perror = p->TargetTicksPerFrame - input;
 			p->PrevEnc = p->Encoder;
 		}
-/*
+
 		Serial.print("Perror_L:");
 		Serial.print(Perror);
 		Serial.print(" input_L:");
@@ -190,8 +192,8 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(" p->ITerm:");
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
-		Serial.println(p->TargetTicksPerFrame<0?-output:output);
-*/
+		Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
+
 
 		 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 		 output += p->output;
@@ -241,8 +243,9 @@ void doRightPID(SetPointInfo * p) {
 	Serial.print(comp);
 	Serial.print("; dw:");
 	Serial.println(dw);
-    Serial.println(p->output < comp*0.7);
+        Serial.println(p->output < comp*0.7);
 */
+
 	if (p->output < comp*0.7) {
 		output = comp;
 		first = true;
@@ -336,7 +339,7 @@ void updatePID() {
 	}
 
 	/* Compute PID update for each motor */
-//	doRightPID(&rightPID);
+	//doRightPID(&rightPID);
 	doLeftPID(&leftPID);
 	doLeftPID(&rightPID);
     int left_speed = int(leftPID.output+0.5);
