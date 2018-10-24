@@ -27,6 +27,7 @@ typedef struct {
 	double ITerm;                    //integrated term
 
 	double output;                    // last motor setting
+	boolean last_derc ;
 
 } SetPointInfo;
 
@@ -49,6 +50,7 @@ void resetPID() {
 	leftPID.output = 0;
 	leftPID.PrevInput = 0;
 	leftPID.ITerm = 0;
+	leftPID.last_derc = 0;
 
 	rightPID.TargetTicksPerFrame = 0.0;
 	rightPID.Encoder = readEncoder(RIGHT);
@@ -56,6 +58,7 @@ void resetPID() {
 	rightPID.output = 0;
 	rightPID.PrevInput = 0;
 	rightPID.ITerm = 0;
+	rightPID.last_derc = 0;
 
 }
 
@@ -100,6 +103,18 @@ void doLeftPID(SetPointInfo * p) {
 		Kd = 0.003;
 		Ki = 0.000001;
 	}
+	boolean derc_chnaged = false;
+	if( (p->TargetTicksPerFrame <0 && lEFT_LAST_DERECTION) || (p->TargetTicksPerFrame > 0 && !lEFT_LAST_DERECTION) ){
+		derc_chnaged = true;
+	}
+	if(p->TargetTicksPerFrame>=0){
+		lEFT_LAST_DERECTION =1;
+	}
+	else {
+		lEFT_LAST_DERECTION =0;
+	}
+
+
 	long Perror;
 	double output;
 	int input;
@@ -131,9 +146,10 @@ void doLeftPID(SetPointInfo * p) {
 	Serial.print(comp);
 	Serial.print("; dw:");
 	Serial.println(dw);
-        Serial.println(p->output < comp*0.7);
 */
-	if (p->output < comp*0.7) {
+    //Serial.println(p->output < comp*0.7);
+
+	if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
 		output = comp;
 		first = true;
 	} else {
@@ -193,8 +209,8 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
-*/
 
+*/
 		 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 		 output += p->output;
 		 p->ITerm += Ki * Perror;
@@ -215,6 +231,12 @@ void doRightPID(SetPointInfo * p) {
 		long Perror;
 		double output;
 		int input;
+//		if(arg2>0){
+//			RIGHT_LAST_DERECTION =1;
+//		}
+//		else if(arg2<0){
+//			RIGHT_LAST_DERECTION =0;
+//		}
 		//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 		int dw = int(p->TargetTicksPerFrame) / 50;
 		if(p->TargetTicksPerFrame<0){
@@ -338,7 +360,7 @@ void updatePID() {
 	}
 
 	/* Compute PID update for each motor */
-	//doRightPID(&rightPID);
+//	doRightPID(&rightPID);
 	doLeftPID(&leftPID);
 	doLeftPID(&rightPID);
     int left_speed = int(leftPID.output+0.5);
