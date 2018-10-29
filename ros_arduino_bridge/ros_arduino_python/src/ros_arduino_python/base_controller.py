@@ -260,15 +260,15 @@ class BaseController:
             right =  x + sin(th) * self.wheel_track / 2.0
             
             
-            if abs(th) > abs(self.max_vel_theta):
-                print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
-                if th > 0 :
-                    left =  x - sin(self.max_vel_theta) * self.wheel_track / 2.0
-                    right =  x + sin(self.max_vel_theta) * self.wheel_track  / 2.0
-                else:
-                    left =  x - sin(self.min_vel_theta) * self.wheel_track / 2.0
-                    right =  x + sin(self.min_vel_theta) * self.wheel_track  / 2.0
-            
+#             if abs(th) > abs(self.max_vel_theta):
+#                 print abs(th),abs(self.max_vel_theta) ,abs(th) > abs(self.max_vel_theta)
+#                 if th > 0 :
+#                     left =  x - sin(self.max_vel_theta) * self.wheel_track / 2.0
+#                     right =  x + sin(self.max_vel_theta) * self.wheel_track  / 2.0
+#                 else:
+#                     left =  x - sin(self.min_vel_theta) * self.wheel_track / 2.0
+#                     right =  x + sin(self.min_vel_theta) * self.wheel_track  / 2.0
+#             
             
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)

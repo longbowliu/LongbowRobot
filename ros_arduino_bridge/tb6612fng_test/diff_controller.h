@@ -228,15 +228,21 @@ void doRightPID(SetPointInfo * p) {
 			Kd = 0.003;
 			Ki = 0.000001;
 		}
+		boolean derc_chnaged = false;
+		if( (p->TargetTicksPerFrame <0 && RIGHT_LAST_DERECTION) || (p->TargetTicksPerFrame > 0 && !RIGHT_LAST_DERECTION) ){
+			derc_chnaged = true;
+		}
+		if(p->TargetTicksPerFrame>=0){
+			RIGHT_LAST_DERECTION =1;
+		}
+		else {
+			RIGHT_LAST_DERECTION =0;
+		}
+
+
 		long Perror;
 		double output;
 		int input;
-//		if(arg2>0){
-//			RIGHT_LAST_DERECTION =1;
-//		}
-//		else if(arg2<0){
-//			RIGHT_LAST_DERECTION =0;
-//		}
 		//Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
 		int dw = int(p->TargetTicksPerFrame) / 50;
 		if(p->TargetTicksPerFrame<0){
@@ -265,9 +271,10 @@ void doRightPID(SetPointInfo * p) {
 		Serial.print(comp);
 		Serial.print("; dw:");
 		Serial.println(dw);
-	        Serial.println(p->output < comp*0.7);
 	*/
-		if (p->output < comp*0.7) {
+	    //Serial.println(p->output < comp*0.7);
+
+		if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
 			output = comp;
 			first = true;
 		} else {
@@ -290,7 +297,7 @@ void doRightPID(SetPointInfo * p) {
 			p->ITerm += Ki * Perror;
 			p->output = output;
 			p->PrevInput = 0;
-
+	/*
 			Serial.print("****Perror_R:");
 			Serial.print(Perror);
 			Serial.print(" input_R:");
@@ -301,7 +308,7 @@ void doRightPID(SetPointInfo * p) {
 			Serial.print(p->ITerm);
 			Serial.print(" output_R:");
 			Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
-
+	*/
 		} else {
 
 			if(p->TargetTicksPerFrame<0){
@@ -313,7 +320,7 @@ void doRightPID(SetPointInfo * p) {
 				Perror = p->TargetTicksPerFrame - input;
 				p->PrevEnc = p->Encoder;
 			}
-
+	/*
 			Serial.print("Perror_R:");
 			Serial.print(Perror);
 			Serial.print(" input_R:");
@@ -328,11 +335,11 @@ void doRightPID(SetPointInfo * p) {
 			Serial.print(" output_R:");
 			Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
 
-/*
+	*/
 			 output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
 			 output += p->output;
 			 p->ITerm += Ki * Perror;
-*/
+
 
 			p->output = output;
 			p->PrevInput = input;
@@ -360,9 +367,9 @@ void updatePID() {
 	}
 
 	/* Compute PID update for each motor */
-//	doRightPID(&rightPID);
 	doLeftPID(&leftPID);
-	doLeftPID(&rightPID);
+	doRightPID(&rightPID);
+//	doLeftPID(&rightPID);
     int left_speed = int(leftPID.output+0.5);
 	if(leftPID.TargetTicksPerFrame<0){
 		left_speed = int(-leftPID.output-0.5);

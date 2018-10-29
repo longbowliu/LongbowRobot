@@ -141,19 +141,7 @@ int runCommand() {
 		leftPID.TargetTicksPerFrame = arg1;
 		rightPID.TargetTicksPerFrame = arg2;
 
-		if(arg1>0){
-			lEFT_LAST_DERECTION =1;
-		}
-		else if(arg1 <0){
-			lEFT_LAST_DERECTION =0;
-		}
 
-		if(arg2>0){
-			RIGHT_LAST_DERECTION =1;
-		}
-		else if(arg2<0){
-			RIGHT_LAST_DERECTION =0;
-		}
 		Serial.println("OK");
 		break;
 	case UPDATE_PID:
