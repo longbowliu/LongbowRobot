@@ -133,7 +133,11 @@ void doLeftPID(SetPointInfo * p) {
 	int comp = 4 + group * 15 + p_v;
 
 	if(group==0 && position==0){
-		comp = comp+5;
+		//comp = comp+5;  //empty
+		comp = comp+11;    // loader
+	}
+	if(group==0 && position==1){
+		comp = comp+7; //loader
 	}
 /*
 	Serial.print("p_v:");
@@ -149,7 +153,8 @@ void doLeftPID(SetPointInfo * p) {
 */
     //Serial.println(p->output < comp*0.7);
 
-	if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
+	//if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
+        if (p->output < comp*0.7 || derc_chnaged) {
 		output = comp;
 		first = true;
 	} else {
@@ -183,7 +188,8 @@ void doLeftPID(SetPointInfo * p) {
 		Serial.print(p->ITerm);
 		Serial.print(" output_L:");
 		Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
-*/
+		*/
+
 	} else {
 
 		if(p->TargetTicksPerFrame<0){
@@ -258,7 +264,11 @@ void doRightPID(SetPointInfo * p) {
 		int comp = 4 + group * 15 + p_v;
 
 		if(group==0 && position==0){
-			comp = comp+5;
+			//comp = comp+5;  //empty
+			comp = comp+11;    // loader
+		}
+		if(group==0 && position==1){
+			comp = comp+7; //loader
 		}
 	/*
 		Serial.print("p_v:");
@@ -274,7 +284,8 @@ void doRightPID(SetPointInfo * p) {
 	*/
 	    //Serial.println(p->output < comp*0.7);
 
-		if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
+		//if (p->output < comp*0.7 || p->output > comp*1.3 || derc_chnaged) {
+                if (p->output < comp*0.7 || derc_chnaged) {
 			output = comp;
 			first = true;
 		} else {
@@ -297,7 +308,7 @@ void doRightPID(SetPointInfo * p) {
 			p->ITerm += Ki * Perror;
 			p->output = output;
 			p->PrevInput = 0;
-	/*
+/*
 			Serial.print("****Perror_R:");
 			Serial.print(Perror);
 			Serial.print(" input_R:");
@@ -308,7 +319,7 @@ void doRightPID(SetPointInfo * p) {
 			Serial.print(p->ITerm);
 			Serial.print(" output_R:");
 			Serial.println(p->TargetTicksPerFrame<0?int(-output-0.5):int(output + 0.5));
-	*/
+*/
 		} else {
 
 			if(p->TargetTicksPerFrame<0){
@@ -320,7 +331,7 @@ void doRightPID(SetPointInfo * p) {
 				Perror = p->TargetTicksPerFrame - input;
 				p->PrevEnc = p->Encoder;
 			}
-	/*
+/*
 			Serial.print("Perror_R:");
 			Serial.print(Perror);
 			Serial.print(" input_R:");
