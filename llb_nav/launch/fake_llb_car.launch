@@ -5,15 +5,15 @@
   <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find llb_nav)/description/llb_car.xacro'" />
   <param name="robot_description" command="$(arg urdf_file)" />
   -->
- <!-- 
+ 
  <param name="robot_description" textfile="$(find llb_nav)/description/llb_car.urdf" />
-   
+  <!--  
   <node name="arbotix" pkg="arbotix_python" type="arbotix_driver" output="screen" clear_params="true">
       <rosparam file="$(find rbx1_bringup)/config/fake_turtlebot_arbotix.yaml" command="load" />
       <param name="sim" value="true"/>
   </node>
    --> 
-    <param name="robot_description" textfile="$(find llb_nav)/description/rplidar_car.urdf" />
+    
   <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
       <rosparam file="$(find ros_arduino_python)/config/my_arduino_params.yaml" command="load" />
   </node> 
