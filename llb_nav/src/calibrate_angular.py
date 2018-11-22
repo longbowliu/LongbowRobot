@@ -21,9 +21,9 @@ class CalibrateAngular():
         r = rospy.Rate(self.rate)
         
         # The test angle is 360 degrees
-        self.test_angle = 2*pi
+        self.test_angle = pi
 
-        self.speed = 0.3 # radians per second
+        self.speed = 0.6 # radians per second
         self.tolerance = 0.1 # degrees converted to radians
         self.odom_angular_scale_correction = 1
         self.start_test = True
