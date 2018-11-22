@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "delete remap the device serial port(ttyUSBX) to  rplidar"
-echo "sudo rm   /etc/udev/rules.d/rplidar.rules"
-sudo rm   /etc/udev/rules.d/rplidar.rules
+echo "delete remap the device serial port(ttyUSBX) to  arduino"
+echo "sudo rm   /etc/udev/rules.d/arduino.rules"
+sudo rm   /etc/udev/rules.d/arduino.rules
 echo " "
 echo "Restarting udev"
 echo ""
