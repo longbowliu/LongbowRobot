@@ -1,5 +1,11 @@
 齐格勒—尼克尔斯经验法
-
 1,need return OK from Arduino ;
 2,PID parameters set in Arduino side , it will lose precision if from xml(?)
+
+udev remap : 
+1, get serial : udevadm info -q all -n /dev/ttyUSB0 | grep -w ID_SERIAL
+2, make rules file (* idProduct get value from ID_MODEL_ID) and copy it into /etc/udev/rules.d
+3, sudo service udev restart
+4, unplugin and plugin the device 
+
  

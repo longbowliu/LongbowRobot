@@ -7,7 +7,7 @@
   <link name="wheel1">
     <visual>
       <geometry>
-        <cylinder length="0.02" radius="0.032"/>
+        <cylinder length="0.055" radius="0.0575"/>
       </geometry>
       <material name="black">
         <color rgba="0 0 0 1"/>
@@ -25,7 +25,7 @@
  <link name="wheel2">
     <visual>
       <geometry>
-        <cylinder length="0.02" radius="0.032"/>
+        <cylinder length="0.055" radius="0.0575"/>
       </geometry>
       <material name="black">
         <color rgba="0 0 0 1"/>
@@ -43,14 +43,90 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <box size=".2 .12 .1"/>
+        <box size=".2 .12 .11"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0575"/>
       <material name="white">
         <color rgba="1 1 1 1"/>
       </material>
     </visual>
   </link>
+  <joint name="base_laser_bottom_joint" type="fixed">
+    <origin rpy="0 0 0 " xyz="0.0 0.0 0.1305"/>
+    <parent link="base_link"/>
+    <child link="base_laser_bottom"/>
+  </joint>
+  <link name="base_laser_bottom">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.041"/>
+      </geometry>
+      <material name="DarkGrey"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.041"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      <mass value="0.1"/>
+    </inertial>
+  </link>
+  <link name="base_laser_middle">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.0115" radius=".02"/>
+      </geometry>
+      <material name="dark_grey">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.0115" radius=".02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      <mass value="0.1"/>
+    </inertial>
+  </link>
+  <joint name="base_laser_middle_joint" type="fixed">
+    <parent link="base_laser_bottom"/>
+    <child link="base_laser_middle"/>
+    <origin rpy="0 0 0" xyz="0 0 0.02625"/>
+  </joint>
+  <link name="laser">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.0175" radius=".0185"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.0175" radius=".0185"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      <mass value="0.1"/>
+    </inertial>
+  </link>
+  <joint name="base_laser_joint" type="fixed">
+    <parent link="base_laser_middle"/>
+    <child link="laser"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0145"/>
+  </joint>
   <link name="camera_link">
     <visual>
       <geometry>
@@ -64,7 +140,7 @@
   <joint name="camera_link_to_base_link" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
-    <origin rpy="0 0 0" xyz="0.02 0.0 0.206"/>
+    <origin rpy="0 0 0" xyz="0.04 0.0 0.12"/>
   </joint>
   <link name="camera_depth_frame">
     <visual>

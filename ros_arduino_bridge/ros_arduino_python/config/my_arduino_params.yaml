@@ -3,7 +3,7 @@
 # For a wireless connection like XBee, the port is typically
 # /dev/ttyUSB# where # is a number such as 0, 1, 2, etc.
 
-port: /dev/ttyUSB0
+port: /dev/arduino
 baud: 19200
 timeout: 0.1
 
@@ -17,8 +17,8 @@ base_controller_rate: 10
 base_frame: base_link
 
 # === Robot drivetrain parameters
-wheel_diameter: 0.064
-wheel_track: 0.195
+wheel_diameter: 0.115
+wheel_track: 0.21
 encoder_resolution: 330 # from Pololu for 131:1 motors
 gear_reduction: 30
 #motors_reversed: True
