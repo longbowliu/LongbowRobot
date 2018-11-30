@@ -6,7 +6,7 @@
   <param name="robot_description" command="$(arg urdf_file)" />
   -->
  
- <param name="robot_description" textfile="$(find llb_nav)/description/llb_car.urdf" />
+ <param name="robot_description" textfile="$(find llb_nav)/description/higherRplidar_camera_car.urdf" />
   <!--  
   <node name="arbotix" pkg="arbotix_python" type="arbotix_driver" output="screen" clear_params="true">
       <rosparam file="$(find rbx1_bringup)/config/fake_turtlebot_arbotix.yaml" command="load" />
