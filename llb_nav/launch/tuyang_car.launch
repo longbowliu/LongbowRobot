@@ -2,12 +2,7 @@
   <!-- Launch the OpenNI2 driver -->
 
 	<include file="$(find llb_nav)/launch/fake_llb_car.launch">
-
-     <!-- 
-     <arg name="depth_registration" value="true" />
-     <arg name="publish_tf" value="false" />
-     --> 
-  </include>
+  	</include>
 
   <!-- Run the depthimage_to_laserscan node -->
   <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan" output="screen">
