@@ -209,56 +209,6 @@
     <origin rpy="0 0 0" xyz="0 0 0.0145"/>
   </joint>
   
-  <link name="camera_link">
-		<visual>
-			<geometry>
-				<box size="0.02 .08 .02" />
-			</geometry>
-			<material name="blue">
-				<color rgba="0 0 255 1" />
-			</material>
-		</visual>
-	</link>
-
-	<joint name="camera_link_to_base_link" type="fixed">
-		<parent link="base_link" />
-		<child link="camera_link" />
-		<origin rpy="0 0 0" xyz="0.07 0.0 0.065" />
-	</joint>
-
-	<link name="camera_depth_frame">
-		<visual>
-			<geometry>
-				<box size="0.005 .005 .005" />
-			</geometry>
-			<material name="blue">
-				<color rgba="0 0 255 1" />
-			</material>
-		</visual>
-	</link>
-
-	<joint name="camera_depth_joint" type="fixed">
-		<origin xyz="0 0 0.01" rpy="0 0 0" />
-		<parent link="camera_link" />
-		<child link="camera_depth_frame" />
-	</joint>
-
-	<link name="camera_depth_optical_frame">
-		<visual>
-			<geometry>
-				<box size="0.005 .005 .005" />
-			</geometry>
-			<material name="blue">
-				<color rgba="0 0 255 1" />
-			</material>
-		</visual>
-	</link>
-
-	<joint name="depth_optical_joint" type="fixed">
-		<origin xyz="0 0 0" rpy="-1.57 0 -1.57" />
-		<parent link="camera_depth_frame" />
-		<child link="camera_depth_optical_frame" />
-	</joint>
 </robot>
 
 
