@@ -31,7 +31,7 @@
 	</link>
 
 
-	<joint name="joint_base_wheel1" type="revolute">
+	<joint name="joint_base_wheel1" type="fixed">
 		<axis xyz="1 0 0" />
 		<parent link="base_link" />
 		<child link="wheel1" />
@@ -51,7 +51,7 @@
 			</material>
 		</visual>
 	</link>
-	<joint name="joint_base_wheel2" type="continuous">
+	<joint name="joint_base_wheel2" type="fixed">
 		<axis xyz="1 0 0" />
 		<parent link="base_link" />
 		<child link="wheel2" />
