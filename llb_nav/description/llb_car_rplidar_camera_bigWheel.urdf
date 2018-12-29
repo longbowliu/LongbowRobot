@@ -14,7 +14,7 @@
       </material>
     </visual>
   </link>
-  <joint name="joint_base_wheel1" type="revolute">
+  <joint name="joint_base_wheel1" type="fixed">
     <axis xyz="0 0 1" />
     <parent link="base_link"/>
     <child link="wheel1"/>
@@ -32,7 +32,7 @@
       </material>
     </visual>
   </link>
-  <joint name="joint_base_wheel2" type="revolute">
+  <joint name="joint_base_wheel2" type="fixed">
   	<axis xyz="0 0 1" />
     <parent link="base_link"/>
     <child link="wheel2"/>
@@ -173,4 +173,3 @@
     <child link="camera_depth_optical_frame"/>
   </joint>
 </robot>
-
