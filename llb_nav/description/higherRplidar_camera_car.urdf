@@ -4,7 +4,7 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <!-- robot name="auto_pro1" xmlns:xacro="http://ros.org/wiki/xacro" -->
-<robot name="auto_pro1"
+<robot name="robot1/auto_pro1"
 	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
@@ -48,15 +48,15 @@
     <!--255 193 37 -->
   </material>
   
-  <joint name="base_l1_wheel_joint" type="continuous">
+  <joint name="robot1/base_l1_wheel_joint" type="fixed">
     <origin rpy="1.57075 0 0 " xyz="0.119 0.1275 -0.065"/>
     <axis xyz="0 0 1"/>
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
-    <parent link="base_link"/>
-    <child link="base_l1_wheel_link"/>
+    <parent link="robot1/base_link"/>
+    <child link="robot1/base_l1_wheel_link"/>
   </joint>
-  <link name="base_l1_wheel_link">
+  <link name="robot1/base_l1_wheel_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -65,15 +65,15 @@
       <material name="Black"/>
     </visual>
   </link>
-  <joint name="base_l2_wheel_joint" type="continuous">
+  <joint name="robot1/base_l2_wheel_joint" type="fixed">
     <origin rpy="1.57075 0 0 " xyz="-0.119 0.1275 -0.065"/>
     <axis xyz="0 0 1"/>
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
-    <parent link="base_link"/>
-    <child link="base_l2_wheel_link"/>
+    <parent link="robot1/base_link"/>
+    <child link="robot1/base_l2_wheel_link"/>
   </joint>
-  <link name="base_l2_wheel_link">
+  <link name="robot1/base_l2_wheel_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -82,15 +82,15 @@
       <material name="Black"/>
     </visual>
   </link>
-  <joint name="base_r1_wheel_joint" type="continuous">
+  <joint name="robot1/base_r1_wheel_joint" type="fixed">
     <origin rpy="-1.57075 0 0 " xyz="0.119 -0.1275 -0.065"/>
     <axis xyz="0 0 1"/>
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
-    <parent link="base_link"/>
-    <child link="base_r1_wheel_link"/>
+    <parent link="robot1/base_link"/>
+    <child link="robot1/base_r1_wheel_link"/>
   </joint>
-  <link name="base_r1_wheel_link">
+  <link name="robot1/base_r1_wheel_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -99,15 +99,15 @@
       <material name="Black"/>
     </visual>
   </link>
-  <joint name="base_r2_wheel_joint" type="continuous">
+  <joint name="robot1/base_r2_wheel_joint" type="fixed">
     <origin rpy="-1.57075 0 0 " xyz="-0.119 -0.1275 -0.065"/>
     <axis xyz="0 0 1"/>
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
-    <parent link="base_link"/>
-    <child link="base_r2_wheel_link"/>
+    <parent link="robot1/base_link"/>
+    <child link="robot1/base_r2_wheel_link"/>
   </joint>
-  <link name="base_r2_wheel_link">
+  <link name="robot1/base_r2_wheel_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -117,7 +117,7 @@
     </visual>
   </link>
   <!-- A box-and-cylinder model of the Hokuyo URG-04LX-UG01 laser scanner -->
-  <link name="base_link">
+  <link name="robot1/base_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -132,12 +132,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="base_laser_bottom_joint" type="fixed">
+  <joint name="robot1/base_laser_bottom_joint" type="fixed">
     <origin rpy="0 0 0 " xyz="0.0 0.0 0.091"/>
-    <parent link="base_link"/>
-    <child link="base_laser_bottom"/>
+    <parent link="robot1/base_link"/>
+    <child link="robot1/base_laser_bottom"/>
   </joint>
-  <link name="base_laser_bottom">
+  <link name="robot1/base_laser_bottom">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -156,7 +156,7 @@
       <mass value="0.1"/>
     </inertial>
   </link>
-  <link name="base_laser_middle">
+  <link name="robot1/base_laser_middle">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -177,12 +177,12 @@
       <mass value="0.1"/>
     </inertial>
   </link>
-  <joint name="base_laser_middle_joint" type="fixed">
-    <parent link="base_laser_bottom"/>
-    <child link="base_laser_middle"/>
+  <joint name="robot1/base_laser_middle_joint" type="fixed">
+    <parent link="robot1/base_laser_bottom"/>
+    <child link="robot1/base_laser_middle"/>
     <origin rpy="0 0 0" xyz="0 0 0.02625"/>
   </joint>
-  <link name="laser">
+  <link name="robot1/laser">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -203,9 +203,9 @@
       <mass value="0.1"/>
     </inertial>
   </link>
-  <joint name="base_laser_joint" type="fixed">
-    <parent link="base_laser_middle"/>
-    <child link="laser"/>
+  <joint name="robot1/base_laser_joint" type="fixed">
+    <parent link="robot1/base_laser_middle"/>
+    <child link="robot1/laser"/>
     <origin rpy="0 0 0" xyz="0 0 0.0145"/>
   </joint>
   
