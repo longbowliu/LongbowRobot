@@ -1,13 +1,11 @@
+<!--roslaunch llb_nav rplidar_camera_car.launch  __ns:=robot1 -->
 <launch>
   <param name="/use_sim_time" value="false" />
 
 
  <param name="robot_description" textfile="$(find llb_nav)/description/higherRplidar_camera_car.urdf" />
 
-  <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
-      <rosparam file="$(find ros_arduino_python)/config/arduino.yaml" command="load" />
-  </node> 
-  
+ 
    
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
       <param name="publish_frequency" type="double" value="20.0" />
