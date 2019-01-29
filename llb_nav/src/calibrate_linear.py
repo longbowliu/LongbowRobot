@@ -30,12 +30,14 @@ class CalibrateLinear():
 
         # The odom frame is usually just /odom
         self.odom_frame = rospy.get_param('~odom_frame', '/odom')
+	self.test_distance = rospy.get_param('~dist',1)
+	rospy.loginfo("longbow dist = " + str(self.test_distance)) 
 
         # Initialize the tf listener
         self.tf_listener = tf.TransformListener()
 
         # Give tf some time to fill its buffer
-        rospy.sleep(0.5)
+        #rospy.sleep(0.5)
 
         # Make sure we see the odom and base frames
         self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(60.0))
